@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "460869812523",
+    "project_id": "ashishapp-efb88",
+    "storage_bucket": "ashishapp-efb88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:460869812523:android:69c1440859537d3d9a456e",
+        "android_client_info": {
+          "package_name": "com.example.ashishappv2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPiZXdvQYhqL4poFG-eNSJNn5G75S3EFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
