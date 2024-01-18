@@ -10,7 +10,6 @@
     <ImageView
         android:id="@+id/takeVideo"
         android:contentDescription="@string/Addimage"
-        android:onClick="selectImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="84dp"
