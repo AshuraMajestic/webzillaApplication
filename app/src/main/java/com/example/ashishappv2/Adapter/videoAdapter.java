@@ -45,6 +45,11 @@ public class videoAdapter extends RecyclerView.Adapter<videoAdapter.VideoViewHol
         return videoList.size();
     }
 
+    public void addData(List<Product> newData) {
+        videoList.addAll(newData);
+        notifyDataSetChanged();
+    }
+
     public class VideoViewHolder extends RecyclerView.ViewHolder {
 
         VideoView videoView;

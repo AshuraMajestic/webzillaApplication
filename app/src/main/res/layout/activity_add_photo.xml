@@ -9,11 +9,11 @@
 
     <ImageView
         android:id="@+id/takeImage"
-        android:contentDescription="@string/Addimage"
-        android:onClick="selectImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="112dp"
+        android:contentDescription="@string/Addimage"
+        android:onClick="selectImage"
         android:src="@drawable/camera2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.051"

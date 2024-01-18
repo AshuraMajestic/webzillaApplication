@@ -35,6 +35,9 @@ public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar loadingView;
 
+    private int currentPage = 1;
+    private static final int PAGE_SIZE = 10;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -60,53 +63,69 @@ public class HomeFragment extends Fragment {
         showLoadingScreen();
 
         // Set up Firebase Database listener
-        videoRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                videoList.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    if (dataSnapshot.child("video").exists()) {
-                        showMessage(dataSnapshot.child("video").toString());
-                        // Ensure all necessary fields are present
-                        if (dataSnapshot.child("name").exists()
-                                && dataSnapshot.child("category").exists()
-                                && dataSnapshot.child("price").exists()
-                                && dataSnapshot.child("pieces").exists()
-                                && dataSnapshot.child("userEmail").exists()) {
-
-                            Product video = new Product();
-                            video.setName(dataSnapshot.child("name").getValue(String.class));
-                            video.setCategory(dataSnapshot.child("category").getValue(String.class));
-                            video.setPrice(dataSnapshot.child("price").getValue(String.class));
-                            video.setPieces(dataSnapshot.child("pieces").getValue(String.class));
-                            video.setUserEmail(dataSnapshot.child("userEmail").getValue(String.class));
-                            video.setVideoUrl(dataSnapshot.child("video").getValue(String.class));
-
-                            videoList.add(video);
-                        } else {
-                            Log.e("FirebaseError", "Incomplete data for video: " + dataSnapshot.getKey());
-                        }
-                    } else {
-                        Log.e("FirebaseError", "Video URL does not exist for: " + dataSnapshot.getKey());
-                    }
-                }
-                videoAdapter.notifyDataSetChanged();
-                hideLoadingScreen();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", "Failed to load videos: " + error.getMessage());
-                showToast("Failed to load videos");
-                hideLoadingScreen();
-            }
-        });
+        loadVideos();
 
         return view;
     }
 
+
+    private void loadVideos() {
+        videoRef.orderByKey().startAt(String.valueOf((currentPage - 1) * PAGE_SIZE)).limitToFirst(PAGE_SIZE)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            List<Product> newDataList = new ArrayList<>();
+
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                if (dataSnapshot.child("video").exists()) {
+                                    showMessage(dataSnapshot.child("video").toString());
+                                    // Ensure all necessary fields are present
+                                    if (dataSnapshot.child("name").exists()
+                                            && dataSnapshot.child("category").exists()
+                                            && dataSnapshot.child("price").exists()
+                                            && dataSnapshot.child("pieces").exists()
+                                            && dataSnapshot.child("userEmail").exists()) {
+
+                                        Product video = new Product();
+                                        video.setName(dataSnapshot.child("name").getValue(String.class));
+                                        video.setCategory(dataSnapshot.child("category").getValue(String.class));
+                                        video.setPrice(dataSnapshot.child("price").getValue(String.class));
+                                        video.setPieces(dataSnapshot.child("pieces").getValue(String.class));
+                                        video.setUserEmail(dataSnapshot.child("userEmail").getValue(String.class));
+                                        video.setVideoUrl(dataSnapshot.child("video").getValue(String.class));
+
+                                        newDataList.add(video);
+                                    } else {
+                                        Log.e("FirebaseError", "Incomplete data for video: " + dataSnapshot.getKey());
+                                    }
+                                } else {
+                                    Log.e("FirebaseError", "Video URL does not exist for: " + dataSnapshot.getKey());
+                                }
+                            }
+
+                            // Increment the current page for the next load
+                            currentPage++;
+
+                            // Add new data to the existing list
+                            videoAdapter.addData(newDataList);
+                            hideLoadingScreen();
+                        } else {
+                            hideLoadingScreen();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("FirebaseError", "Failed to load videos: " + error.getMessage());
+                        showToast("Failed to load videos");
+                        hideLoadingScreen();
+                    }
+                });
+    }
+
     private void showMessage(String string) {
-        Log.d("AshuraDB",string);
+        Log.d("AshuraDB", string);
     }
 
     private void hideLoadingScreen() {

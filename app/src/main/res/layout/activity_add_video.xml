@@ -9,10 +9,10 @@
 
     <ImageView
         android:id="@+id/takeVideo"
-        android:contentDescription="@string/Addimage"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="152dp"
+        android:contentDescription="@string/Addimage"
         android:src="@drawable/video"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.051"
@@ -21,13 +21,15 @@
 
     <VideoView
         android:id="@+id/videoView"
-        android:backgroundTint="@color/transparent"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:backgroundTint="@color/transparent"
         app:layout_constraintBottom_toTopOf="@+id/textView6"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/takeVideo"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
+        app:layout_constraintTop_toBottomOf="@+id/view2"
+        app:layout_constraintVertical_bias="1.0" />
 
     <View
         android:id="@+id/view2"
