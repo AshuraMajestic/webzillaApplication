@@ -68,10 +68,7 @@ public class videoAdapter extends RecyclerView.Adapter<videoAdapter.VideoViewHol
                 StorageReference videoRef = storage.getReferenceFromUrl(videoPath);
 
                 videoRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    // Create MediaController to enable video controls
-                    MediaController mediaController = new MediaController(itemView.getContext());
-                    mediaController.setAnchorView(videoView);
-                    videoView.setMediaController(mediaController);
+
 
                     // Set the video URI and start the video
                     videoView.setVideoURI(uri);
