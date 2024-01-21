@@ -67,7 +67,7 @@ public class LoginFragment extends Fragment {
         loggo= view.findViewById(R.id.logBtn);
         register.setOnClickListener(v->{
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame, new PlusFragment());
+            transaction.replace(R.id.frame_layout, new PlusFragment());
             transaction.commit();
         });
         loggo.setOnClickListener(v->{
@@ -88,7 +88,7 @@ public class LoginFragment extends Fragment {
             if(task.isSuccessful()){
                 makeToast("Log in successful");
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame,new HomeFragment());
+                transaction.replace(R.id.frame_layout,new HomeFragment());
                 transaction.commit();
             }
             else{

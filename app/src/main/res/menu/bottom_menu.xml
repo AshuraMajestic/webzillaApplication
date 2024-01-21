@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
 
     <item
         android:id="@+id/home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/home"
-        android:title="@string/home"
-        />
+        android:title="Home"
+        android:icon="@drawable/home"/>
+
+    <item
+        android:id="@+id/search"
+        android:title="Search"
+        android:icon="@drawable/search_svgrepo_com"/>
 
     <item
         android:id="@+id/plus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/plus"
-        android:title="@string/plus"
-        />
+        android:title="Product"
+        android:icon="@drawable/plus" />
+
+    <item
+        android:id="@+id/manage"
+        android:title="Manage"
+        android:icon="@drawable/stack2_svgrepo_com"/>
+
     <item
         android:id="@+id/profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/person"
-        android:title="@string/profile" />
+        android:title="Profile"
+        android:icon="@drawable/person"/>
+
 </menu>

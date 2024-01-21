@@ -17,9 +17,7 @@ import android.widget.Toast;
 import com.example.ashishappv2.Domains.userData;
 import com.example.ashishappv2.R;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -36,8 +34,8 @@ public class PlusFragment extends Fragment {
     }
 
     public static PlusFragment newInstance() {
-        PlusFragment fragment = new PlusFragment();
-        return fragment;
+        PlusFragment plusFragment = new PlusFragment();
+        return plusFragment;
     }
 
     @Override
@@ -68,7 +66,7 @@ public class PlusFragment extends Fragment {
         loggo= view.findViewById(R.id.logBtn);
         loggo.setOnClickListener(v->{
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame,new LoginFragment());
+            transaction.replace(R.id.frame_layout,new LoginFragment());
             transaction.commit();
         });
         register.setOnClickListener(v->{
@@ -96,7 +94,7 @@ public class PlusFragment extends Fragment {
                 makeToast("Account Created Successfully");
                 saveUserData(user);
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.frame,new LoginFragment());
+                transaction.replace(R.id.frame_layout,new LoginFragment());
                 transaction.commit();
             }
             else{

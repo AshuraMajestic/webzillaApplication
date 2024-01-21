@@ -1,24 +1,26 @@
 package com.example.ashishappv2.Activity;
 
-import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.ashishappv2.Fragment.HomeFragment;
+import com.example.ashishappv2.Fragment.ManageFragment;
 import com.example.ashishappv2.Fragment.PlusFragment;
 import com.example.ashishappv2.Fragment.ProfileFragment;
 import com.example.ashishappv2.R;
@@ -27,8 +29,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    private DrawerLayout drawerLayout;
     private BottomNavigationView bottomBar;
-    private PopupWindow popupWindow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +54,17 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     } else {
                         showPopUp();
-                        return true;
+                        return false;
                     }
                 } else if (id == R.id.profile) {
                     replace(new ProfileFragment());
+                    return true;
+                }
+                else if(id == R.id.manage){
+                    replace(new ManageFragment());
+                    return true;
+                }
+                else if(id==R.id.search){
                     return true;
                 }
                 return false;
@@ -62,65 +72,61 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showPopUp() {
+        final Dialog dialog= new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottomdialog);
+
+        LinearLayout videoLayout = dialog.findViewById(R.id.layoutVideo);
+        LinearLayout imageLayout = dialog.findViewById(R.id.layoutImage);
+        ImageView cancelButton=dialog.findViewById(R.id.cancelButton);
+        videoLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(),AddVideo.class);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+
+
+            }
+        });
+
+        imageLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(),AddPhoto.class);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+
+
+            }
+        });
+
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
+
     private boolean isUserRegistered() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         return auth.getCurrentUser() != null;
     }
-    private void showPopUp() {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        @SuppressLint("ResourceType") View popupView = inflater.inflate(R.menu.custom_menu_layout, null);
-
-        popupWindow = new PopupWindow(
-                popupView,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                true // Set this to true to make the PopupWindow outside touchable
-        );
-
-        // Set background drawable with a transparent color to close the popup when clicked outside
-        popupWindow.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        LinearLayout addPhotoButton = popupView.findViewById(R.id.imageButton1);
-        LinearLayout addVideoButton = popupView.findViewById(R.id.imageButton2);
-
-        addPhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onImageButton1Click();
-                popupWindow.dismiss();
-            }
-        });
-
-        addVideoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onImageButton2Click();
-                popupWindow.dismiss();
-            }
-        });
-
-        // Adjust the y-coordinate and gravity to position the PopupWindow above the BottomNavigationView
-        int[] location = new int[2];
-        bottomBar.getLocationOnScreen(location);
-        int y = location[1] - popupWindow.getHeight();
-
-        popupWindow.showAtLocation(bottomBar, Gravity.NO_GRAVITY, 0, y);
-    }
-
-
-    private void onImageButton1Click() {
-        Intent intent=new Intent(getApplicationContext(),AddPhoto.class);
-        startActivity(intent);
-    }
-
-    private void onImageButton2Click() {
-        Intent intent=new Intent(getApplicationContext(),AddVideo.class);
-        startActivity(intent);
-    }
-
+    
     private void replace(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frame, fragment);
+        transaction.replace(R.id.frame_layout, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }

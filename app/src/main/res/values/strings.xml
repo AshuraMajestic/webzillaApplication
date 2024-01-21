@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">AshishAppV2</string>
-    <string name="search">Search here</string>
+    <string name="search">Search</string>
     <string name="home">Home</string>
     <string name="plus">Add</string>
     <string name="profile">Profile</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="now">Register Now</string>
     <string name="User">Username</string>
     <string name="Shop">Shop Name</string>
@@ -23,4 +22,7 @@
     <string name="productcategory">Product Caegory</string>
     <string name="price">Price</string>
     <string name="per">Pieces</string>
+    <string name="mange">Manage</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
