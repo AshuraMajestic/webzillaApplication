@@ -20,9 +20,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.ashishappv2.Fragment.HomeFragment;
-import com.example.ashishappv2.Fragment.ManageFragment;
+import com.example.ashishappv2.Fragment.OrderFragment;
 import com.example.ashishappv2.Fragment.PlusFragment;
 import com.example.ashishappv2.Fragment.ProfileFragment;
+import com.example.ashishappv2.Fragment.SearchFragment;
 import com.example.ashishappv2.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,11 +61,12 @@ public class MainActivity extends AppCompatActivity {
                     replace(new ProfileFragment());
                     return true;
                 }
-                else if(id == R.id.manage){
-                    replace(new ManageFragment());
+                else if(id == R.id.Order){
+                    replace(new OrderFragment());
                     return true;
                 }
                 else if(id==R.id.search){
+                    replace(new SearchFragment());
                     return true;
                 }
                 return false;
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         LinearLayout videoLayout = dialog.findViewById(R.id.layoutVideo);
         LinearLayout imageLayout = dialog.findViewById(R.id.layoutImage);
+        LinearLayout logoLayout = dialog.findViewById(R.id.layoutLogo);
         ImageView cancelButton=dialog.findViewById(R.id.cancelButton);
         videoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +106,18 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        logoLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(),AddLogo.class);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+
+
+            }
+        });
+
 
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         return auth.getCurrentUser() != null;
     }
-    
+
     private void replace(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.frame_layout, fragment);

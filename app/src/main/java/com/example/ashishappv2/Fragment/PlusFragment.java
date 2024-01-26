@@ -2,6 +2,7 @@ package com.example.ashishappv2.Fragment;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -122,7 +123,17 @@ public class PlusFragment extends Fragment {
     private void makeToast(String s){
         Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
     }
-
+    private void setUpOnBackPressed(){
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    setEnabled(false);
+                    requireActivity().onBackPressed();
+                }
+            }
+        });
+    }
 
 
 }

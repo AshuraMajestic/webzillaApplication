@@ -139,6 +139,17 @@ public class AddPhoto extends AppCompatActivity {
             imageView.setImageURI(selectedImageUris.get(0));
         }
     }
+    @Override
+    public void onBackPressed() {
+        // Handle the back button press
+        super.onBackPressed();
+
+        // Navigate back to the previous activity (MainActivity)
+        Intent intent = new Intent(AddPhoto.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 
     private  void showMessage(String message){
         Log.d("AshuraDB",message);

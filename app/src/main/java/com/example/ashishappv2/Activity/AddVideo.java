@@ -77,7 +77,16 @@ public class AddVideo extends AppCompatActivity {
             videoView.start();
         }
     }
+    @Override
+    public void onBackPressed() {
+        // Handle the back button press
+        super.onBackPressed();
 
+        // Navigate back to the previous activity (MainActivity)
+        Intent intent = new Intent(AddVideo.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     private void saveToFirebase() {
         if (selectedVideoUri == null) {

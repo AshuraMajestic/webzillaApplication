@@ -2,6 +2,7 @@ package com.example.ashishappv2.Fragment;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -79,7 +80,6 @@ public class HomeFragment extends Fragment {
 
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 if (dataSnapshot.child("video").exists()) {
-                                    showMessage(dataSnapshot.child("video").toString());
                                     // Ensure all necessary fields are present
                                     if (dataSnapshot.child("name").exists()
                                             && dataSnapshot.child("category").exists()
@@ -139,7 +139,17 @@ public class HomeFragment extends Fragment {
             loadingView.setVisibility(View.VISIBLE);
         }
     }
-
+    private void setUpOnBackPressed(){
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(isEnabled()){
+                    setEnabled(false);
+                    requireActivity().onBackPressed();
+                }
+            }
+        });
+    }
     private void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
