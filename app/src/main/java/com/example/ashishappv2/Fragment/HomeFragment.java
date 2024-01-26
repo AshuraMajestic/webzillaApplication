@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
@@ -69,7 +70,6 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-
     private void loadVideos() {
         videoRef.orderByKey().startAt(String.valueOf((currentPage - 1) * PAGE_SIZE)).limitToFirst(PAGE_SIZE)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -79,30 +79,30 @@ public class HomeFragment extends Fragment {
                             List<Product> newDataList = new ArrayList<>();
 
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                if (dataSnapshot.child("video").exists()) {
-                                    // Ensure all necessary fields are present
-                                    if (dataSnapshot.child("name").exists()
-                                            && dataSnapshot.child("category").exists()
-                                            && dataSnapshot.child("price").exists()
-                                            && dataSnapshot.child("pieces").exists()
-                                            && dataSnapshot.child("userEmail").exists()) {
+                                // Ensure all necessary fields are present
+                                if (dataSnapshot.child("name").exists()
+                                        && dataSnapshot.child("category").exists()
+                                        && dataSnapshot.child("price").exists()
+                                        && dataSnapshot.child("pieces").exists()
+                                        && dataSnapshot.child("userEmail").exists()
+                                        && dataSnapshot.child("video").exists()) {
 
-                                        Product video = new Product();
-                                        video.setName(dataSnapshot.child("name").getValue(String.class));
-                                        video.setCategory(dataSnapshot.child("category").getValue(String.class));
-                                        video.setPrice(dataSnapshot.child("price").getValue(String.class));
-                                        video.setPieces(dataSnapshot.child("pieces").getValue(String.class));
-                                        video.setUserEmail(dataSnapshot.child("userEmail").getValue(String.class));
-                                        video.setVideoUrl(dataSnapshot.child("video").getValue(String.class));
+                                    Product video = new Product();
+                                    video.setName(dataSnapshot.child("name").getValue(String.class));
+                                    video.setCategory(dataSnapshot.child("category").getValue(String.class));
+                                    video.setPrice(dataSnapshot.child("price").getValue(String.class));
+                                    video.setPieces(dataSnapshot.child("pieces").getValue(String.class));
+                                    video.setUserEmail(dataSnapshot.child("userEmail").getValue(String.class));
+                                    video.setVideoUrl(dataSnapshot.child("video").getValue(String.class));
 
-                                        newDataList.add(video);
-                                    } else {
-                                        Log.e("FirebaseError", "Incomplete data for video: " + dataSnapshot.getKey());
-                                    }
+                                    newDataList.add(video);
                                 } else {
-                                    Log.e("FirebaseError", "Video URL does not exist for: " + dataSnapshot.getKey());
+                                    Log.e("FirebaseError", "Incomplete data for video: " + dataSnapshot.getKey());
                                 }
                             }
+
+                            // Reverse the order of newDataList before adding it to the adapter
+                            Collections.reverse(newDataList);
 
                             // Increment the current page for the next load
                             currentPage++;
@@ -139,17 +139,19 @@ public class HomeFragment extends Fragment {
             loadingView.setVisibility(View.VISIBLE);
         }
     }
-    private void setUpOnBackPressed(){
+
+    private void setUpOnBackPressed() {
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if(isEnabled()){
+                if (isEnabled()) {
                     setEnabled(false);
                     requireActivity().onBackPressed();
                 }
             }
         });
     }
+
     private void showToast(String message) {
         Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }

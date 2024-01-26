@@ -45,8 +45,19 @@ public class videoAdapter extends RecyclerView.Adapter<videoAdapter.VideoViewHol
         return videoList.size();
     }
 
+    public void setData(List<Product> newData) {
+        videoList.clear();
+        videoList.addAll(newData);
+        notifyDataSetChanged();
+    }
+
     public void addData(List<Product> newData) {
         videoList.addAll(newData);
+        notifyDataSetChanged();
+    }
+
+    public void addData(int index, List<Product> newData) {
+        videoList.addAll(index, newData);
         notifyDataSetChanged();
     }
 
@@ -68,8 +79,6 @@ public class videoAdapter extends RecyclerView.Adapter<videoAdapter.VideoViewHol
                 StorageReference videoRef = storage.getReferenceFromUrl(videoPath);
 
                 videoRef.getDownloadUrl().addOnSuccessListener(uri -> {
-
-
                     // Set the video URI and start the video
                     videoView.setVideoURI(uri);
                     videoView.setOnPreparedListener(mp -> {
