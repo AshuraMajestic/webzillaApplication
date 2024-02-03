@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.ashishappv2.Fragment.HomeFragment;
+import com.example.ashishappv2.Fragment.InfoPageFragment;
 import com.example.ashishappv2.Fragment.OrderFragment;
 import com.example.ashishappv2.Fragment.PlusFragment;
 import com.example.ashishappv2.Fragment.ProfileFragment;
@@ -50,20 +52,41 @@ public class MainActivity extends AppCompatActivity {
                     replace(new HomeFragment());
                     return true;
                 } else if (id == R.id.plus) {
-                    if (!isUserRegistered()) {
+                    if(!isUserRegistered()) {
                         replace(new PlusFragment());
                         return true;
                     } else {
-                        showPopUp();
-                        return false;
+                        InfoPageFragment infoPageFragment = (InfoPageFragment) getSupportFragmentManager().findFragmentByTag(InfoPageFragment.class.getSimpleName());
+
+                        if (infoPageFragment != null && infoPageFragment.isVisible()) {
+                            showPopUp();
+                            return false;
+                        } else {
+                            // InfoPageFragment is not added, replace it and show the popup
+                            replace(new InfoPageFragment());
+                            showPopUp();
+                            return true;
+                        }
                     }
                 } else if (id == R.id.profile) {
-                    replace(new ProfileFragment());
-                    return true;
+                    if(!isUserRegistered()) {
+                        Toast.makeText(MainActivity.this, "Please Register First", Toast.LENGTH_SHORT).show();
+                        replace(new PlusFragment());
+                        return false;
+                    } else {
+                        replace(new ProfileFragment());
+                        return true;
+                    }
                 }
                 else if(id == R.id.Order){
-                    replace(new OrderFragment());
-                    return true;
+                    if(!isUserRegistered()) {
+                        Toast.makeText(MainActivity.this, "Please Register First", Toast.LENGTH_SHORT).show();
+                        replace(new PlusFragment());
+                        return false;
+                    } else {
+                        replace(new OrderFragment());
+                        return true;
+                    }
                 }
                 else if(id==R.id.search){
                     replace(new SearchFragment());

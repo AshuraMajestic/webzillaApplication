@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ashishappv2.Domains.userData;
@@ -28,7 +29,8 @@ public class PlusFragment extends Fragment {
     private FirebaseAuth auth;
     private DatabaseReference database;
     TextInputLayout username, shopname, address, mail, phonenumber,pass;
-    Button register,loggo;
+    Button register;
+    TextView loggo;
 
     public PlusFragment() {
         // Required empty public constructor
@@ -64,7 +66,7 @@ public class PlusFragment extends Fragment {
         mail = view.findViewById(R.id.mailRegister);
         pass=view.findViewById(R.id.passRegister);
         phonenumber = view.findViewById(R.id.numberRegister);
-        loggo= view.findViewById(R.id.logBtn);
+        loggo= view.findViewById(R.id.loggo);
         loggo.setOnClickListener(v->{
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout,new LoginFragment());

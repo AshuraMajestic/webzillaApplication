@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -28,20 +29,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
 public class ProfileFragment extends Fragment {
 
     ImageView logo;
     TextView shopName,editBusiness;
     LinearLayout accountDetail,storeSetting,youOwnApp,forPc,Payment;
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase database;
-    private StorageReference storageReference;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
 public static ProfileFragment newInstance() {
-        ProfileFragment fragment = new ProfileFragment();
-        return fragment;
+    ProfileFragment profileFragment = new ProfileFragment();
+    return profileFragment;
     }
 
     @Override
@@ -64,18 +65,12 @@ public static ProfileFragment newInstance() {
         forPc=view.findViewById(R.id.pc);
         Payment=view.findViewById(R.id.payment);
 
-        Payment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(getContext(), PaymentGateway.class);
-                startActivity(intent);
-            }
-        });
+
         //Firebase Elements
-        mAuth = FirebaseAuth.getInstance();
-        database = FirebaseDatabase.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference().child("ShopLogo");
-        String userId = mAuth.getCurrentUser().getUid();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("ShopLogo");
+        String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         StorageReference userLogoRef = storageReference.child(userId).child("logo.jpg");
         userLogoRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -88,9 +83,34 @@ public static ProfileFragment newInstance() {
         retrieveShopName();
         return view;
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Payment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Payment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            Intent intent = new Intent(getContext(), PaymentGateway.class);
+                            if (getContext() != null) {
+                                startActivity(intent);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("PaymentClick", "Error in onClick: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     private void retrieveShopName() {
         // Get the current user's ID
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         // Reference to the user's data in the database
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("UserData").child(userId);

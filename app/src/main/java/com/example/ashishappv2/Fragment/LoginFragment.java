@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ashishappv2.R;
@@ -31,7 +32,8 @@ import java.util.Objects;
 public class LoginFragment extends Fragment {
 
     TextInputLayout mail, pass;
-    Button register,loggo;
+    Button loggo;
+    TextView register;
     FirebaseAuth auth;
     DatabaseReference database;
 
@@ -62,7 +64,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        register = view.findViewById(R.id.buttonregister);
+        register = view.findViewById(R.id.registernow);
         mail = view.findViewById(R.id.mailLogin);
         pass=view.findViewById(R.id.passLogin);
         loggo= view.findViewById(R.id.logBtn);
