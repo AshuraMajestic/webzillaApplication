@@ -105,7 +105,18 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout videoLayout = dialog.findViewById(R.id.layoutVideo);
         LinearLayout imageLayout = dialog.findViewById(R.id.layoutImage);
         LinearLayout logoLayout = dialog.findViewById(R.id.layoutLogo);
+        LinearLayout inventoryLayout=dialog.findViewById(R.id.layoutInventory);
         ImageView cancelButton=dialog.findViewById(R.id.cancelButton);
+
+        inventoryLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getApplicationContext(),InventoryActivity.class);
+                startActivity(intent);
+                finish();
+                dialog.dismiss();
+            }
+        });
         videoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

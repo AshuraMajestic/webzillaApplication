@@ -1,5 +1,6 @@
 package com.example.ashishappv2.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,7 +17,10 @@ import android.widget.Toast;
 
 import com.example.ashishappv2.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +34,7 @@ public class AddPhoto extends AppCompatActivity {
     private EditText productname,productcateogory,price,pieces;
     private final List<Uri> selectedImageUris = new ArrayList<>();
     private static final int PICK_IMAGE_REQUEST = 1;
+    private String ShopName;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private FirebaseStorage storage;
@@ -50,30 +55,54 @@ public class AddPhoto extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference().child("productimage");
-
+getShopName();
         btn.setOnClickListener(v->{
             savetodb();
         });
 
     }
+    private void getShopName() {
+        String userId = mAuth.getCurrentUser().getUid();
 
+        DatabaseReference userRef = database.getReference("UserData").child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ShopName = dataSnapshot.child("link").getValue(String.class).trim().toLowerCase();
+                    storageReference = storage.getReference().child("Shops");
+                } else {
+                    showToast("User data not found");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                showToast("Error retrieving user data");
+            }
+        });
+    }
     private void savetodb() {
-        if (productname.getText().toString().isEmpty() || productcateogory.getText().toString().isEmpty() || price.getText().toString().isEmpty() || pieces.getText().toString().isEmpty()) {
+        if (productname.getText() == null || productname.getText().toString().isEmpty() ||
+                productcateogory.getText() == null || productcateogory.getText().toString().isEmpty() ||
+                price.getText() == null || price.getText().toString().isEmpty() ||
+                pieces.getText() == null || pieces.getText().toString().isEmpty()) {
             showToast("Please fill in all the fields");
             return;
         }
-
-        String productId = database.getReference().child("productimage").push().getKey();
-
+        String productName = productname.getText().toString().trim();
         // Create a reference to the product in the database
-        DatabaseReference productRef = database.getReference().child("productimage").child(productId);
+        DatabaseReference shopRef = database.getReference().child("Shops").child(ShopName);
+        DatabaseReference productRef = shopRef.child("Products").child(productName);
+
         String userEmail = mAuth.getCurrentUser().getEmail();
+
         // Upload images to Firebase Storage
         for (int i = 0; i < selectedImageUris.size(); i++) {
             Uri imageUri = selectedImageUris.get(i);
             String imageName = "image_" + i + ".jpg";
-            StorageReference imageRef = storageReference.child(productId).child(imageName);
+            StorageReference imageRef = storageReference.child(ShopName).child("Products").child(productName).child(imageName);
 
             // Upload image to Firebase Storage
             int finalI = i;
@@ -91,7 +120,7 @@ public class AddPhoto extends AppCompatActivity {
         }
 
         // Save other product details to the database
-        productRef.child("name").setValue(productname.getText().toString());
+        productRef.child("name").setValue(productName);
         productRef.child("category").setValue(productcateogory.getText().toString());
         productRef.child("price").setValue(price.getText().toString());
         productRef.child("pieces").setValue(pieces.getText().toString());
@@ -102,6 +131,7 @@ public class AddPhoto extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 
     public void selectImage(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK);

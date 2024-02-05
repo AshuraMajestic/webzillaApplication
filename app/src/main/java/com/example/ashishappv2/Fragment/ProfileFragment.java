@@ -54,33 +54,55 @@ public static ProfileFragment newInstance() {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view= inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
         //Page Elements
-        logo=view.findViewById(R.id.showLogo);
-        shopName=view.findViewById(R.id.ShopName);
-        editBusiness=view.findViewById(R.id.EditBusiness);
-        accountDetail=view.findViewById(R.id.accountDetails);
-        storeSetting=view.findViewById(R.id.StoreSettings);
-        youOwnApp=view.findViewById(R.id.yourown);
-        forPc=view.findViewById(R.id.pc);
-        Payment=view.findViewById(R.id.payment);
+        logo = view.findViewById(R.id.showLogo);
+        shopName = view.findViewById(R.id.ShopName);
+        editBusiness = view.findViewById(R.id.EditBusiness);
+        accountDetail = view.findViewById(R.id.accountDetails);
+        storeSetting = view.findViewById(R.id.StoreSettings);
+        youOwnApp = view.findViewById(R.id.yourown);
+        forPc = view.findViewById(R.id.pc);
+        Payment = view.findViewById(R.id.payment);
 
 
         //Firebase Elements
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("ShopLogo");
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("UserData").child(userId);
 
-        StorageReference userLogoRef = storageReference.child(userId).child("logo.jpg");
-        userLogoRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Glide.with(requireContext())
-                    .load(uri)
-                    .into(logo);
-        }).addOnFailureListener(e -> {
-            Log.d("AshuraDB",e.toString());
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    userData user = dataSnapshot.getValue(userData.class);
+                    if (user != null) {
+                        // Get the link dynamically from the user data
+                        String link = user.getLink();
+
+                        // Now use the dynamically retrieved link to fetch the logo
+                        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Shops").child(link);
+                        StorageReference userLogoRef = storageReference.child("ShopLogo").child("logo.jpg");
+
+                        userLogoRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            Glide.with(requireContext())
+                                    .load(uri)
+                                    .into(logo);
+                        }).addOnFailureListener(e -> {
+                            Log.d("AshuraDB", e.toString());
+                        });
+
+                        retrieveShopName();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving data: " + databaseError.getMessage());
+            }
         });
-        retrieveShopName();
         return view;
     }
 

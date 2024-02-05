@@ -79,12 +79,13 @@ public class PlusFragment extends Fragment {
             String email = Objects.requireNonNull(mail.getEditText()).getText().toString().trim();
             String phoneNumber = Objects.requireNonNull(phonenumber.getEditText()).getText().toString().trim();
             String password = Objects.requireNonNull(pass.getEditText()).getText().toString();
+            String link = shopName.toLowerCase().replaceAll("\\s", "");
             if (userName.isEmpty() || shopName.isEmpty() || addressText.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty()) {
                 makeToast("Please fill in all fields");
                 return;
             }
             else{
-                userData user= new userData(userName,email,password,shopName,addressText,phoneNumber);
+                userData user= new userData(userName,email,password,shopName,addressText,phoneNumber,link);
                 createAccount(user);
             }
 
