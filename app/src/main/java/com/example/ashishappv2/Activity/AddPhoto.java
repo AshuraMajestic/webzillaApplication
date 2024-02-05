@@ -125,6 +125,8 @@ getShopName();
         productRef.child("price").setValue(price.getText().toString());
         productRef.child("pieces").setValue(pieces.getText().toString());
         productRef.child("userEmail").setValue(userEmail);
+        boolean b=true;
+        productRef.child("available").setValue(b);
 
         showToast("Product added successfully");
         Intent intent = new Intent(AddPhoto.this, MainActivity.class);

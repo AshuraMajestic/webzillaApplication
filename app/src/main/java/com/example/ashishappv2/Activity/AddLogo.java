@@ -266,4 +266,14 @@ public class AddLogo extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public void onBackPressed() {
+        // Handle the back button press
+        super.onBackPressed();
+
+        // Navigate back to the previous activity (MainActivity)
+        Intent intent = new Intent(AddLogo.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

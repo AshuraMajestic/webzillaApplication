@@ -12,7 +12,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/order_image" />
+        android:src="@android:drawable/ic_menu_crop" />
 
     <!-- Product Details -->
     <LinearLayout

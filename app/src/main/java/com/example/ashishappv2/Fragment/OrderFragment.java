@@ -12,12 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.ashishappv2.Adapter.OrderAdapter;
-import com.example.ashishappv2.Domains.ProductWithImage;
+import com.example.ashishappv2.Domains.ProductInventory;
 import com.example.ashishappv2.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,8 +31,9 @@ public class OrderFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private OrderAdapter orderAdapter;
-    private List<ProductWithImage> productList;
+    private List<ProductInventory> productList;
     private FirebaseAuth mAuth;
+    String ShopName;
     private FirebaseDatabase database;
 
     public OrderFragment() {
@@ -62,10 +63,37 @@ public class OrderFragment extends Fragment {
         orderAdapter = new OrderAdapter(getContext(), productList);
         recyclerView.setAdapter(orderAdapter);
 
-//        fetchUserData();  // Moved this line after initializing the adapter
-
+        getShopName();
         return view;
     }
+
+    private void getShopName() {
+        String userId = mAuth.getCurrentUser().getUid();
+
+        DatabaseReference userRef = database.getReference("UserData").child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ShopName = dataSnapshot.child("link").getValue(String.class).trim().toLowerCase();
+                    fetchUserData();
+                } else {
+                    showToast("User data not found");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                showToast("Error retrieving user data");
+            }
+        });
+    }
+
+    private void showToast(String userDataNotFound) {
+        Toast.makeText(getContext(), userDataNotFound, Toast.LENGTH_SHORT).show();
+    }
+
     private void setUpOnBackPressed(){
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -78,18 +106,17 @@ public class OrderFragment extends Fragment {
         });
     }
     private void fetchUserData() {
-        String userEmail = mAuth.getCurrentUser().getEmail();
 
-        DatabaseReference productRef = database.getReference().child("productimage");
+        DatabaseReference productRef = database.getReference().child("Shops").child(ShopName).child("Products");
 
         // Query the database to get products for the current user
-        productRef.orderByChild("userEmail").equalTo(userEmail)
+        productRef
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         productList.clear();  // Clear existing data
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            ProductWithImage product = snapshot.getValue(ProductWithImage.class);
+                            ProductInventory product = snapshot.getValue(ProductInventory.class);
                             Log.d("AshuraDB", "Product: " + product.toString());
                             productList.add(product);
                         }

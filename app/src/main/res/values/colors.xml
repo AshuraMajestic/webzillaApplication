@@ -6,7 +6,10 @@
     <color name="grey">#858585</color>
     <color name="greyish">#D6D6D6</color>
     <color name="green">#802EEC</color>
+    <color name="go">#07DA00</color>
     <color name="red">#A30000</color>
     <color name="transparent">#00D6BBDD</color>
     <color name="link">#FB6718</color>
+    <color name="btn_color">#ED731E</color>
+
 </resources>

@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.ashishappv2.Domains.ProductWithImage;
+import com.example.ashishappv2.Domains.ProductInventory;
 import com.example.ashishappv2.R;
 
 import java.util.List;
@@ -19,10 +19,10 @@ import java.util.Map;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
-    private List<ProductWithImage> itemList;
+    private List<ProductInventory> itemList;
     private Context context;
 
-    public OrderAdapter(Context context, List<ProductWithImage> itemList) {
+    public OrderAdapter(Context context, List<ProductInventory> itemList) {
         this.context = context;
         this.itemList = itemList;
     }
@@ -36,7 +36,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ProductWithImage item = itemList.get(position);
+        ProductInventory item = itemList.get(position);
 
         holder.productNameTextView.setText(item.getName());
         holder.categoryTextView.setText(item.getCategory());
