@@ -129,7 +129,7 @@ getShopName();
         productRef.child("available").setValue(b);
 
         showToast("Product added successfully");
-        Intent intent = new Intent(AddPhoto.this, MainActivity.class);
+        Intent intent = new Intent(AddPhoto.this, InventoryActivity.class);
         startActivity(intent);
         finish();
     }
@@ -176,7 +176,7 @@ getShopName();
         // Handle the back button press
         super.onBackPressed();
 
-        // Navigate back to the previous activity (MainActivity)
+        // Navigate back to the previous activity
         Intent intent = new Intent(AddPhoto.this, MainActivity.class);
         startActivity(intent);
         finish();

@@ -1,5 +1,6 @@
 package com.example.ashishappv2.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,10 +10,13 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ashishappv2.Activity.AddPhoto;
 import com.example.ashishappv2.Adapter.ProductAdapter;
 import com.example.ashishappv2.Domains.ProductInventory;
 import com.example.ashishappv2.R;
@@ -29,6 +33,7 @@ import java.util.List;
 public class MyproductsFragment extends Fragment {
 
     private RecyclerView recyclerView;
+    private AppCompatButton button;
     private ProductAdapter productAdapter;
     private List<ProductInventory> productList;
     private FirebaseAuth mAuth;
@@ -54,6 +59,7 @@ public class MyproductsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_myproducts, container, false);
         mAuth = FirebaseAuth.getInstance();
+        button=view.findViewById(R.id.button3);
         database = FirebaseDatabase.getInstance();
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -62,8 +68,19 @@ public class MyproductsFragment extends Fragment {
         recyclerView.setAdapter(productAdapter);
 
         getShopName(); // Initiating the data retrieval
-
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getContext(), AddPhoto.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getShopName() {
