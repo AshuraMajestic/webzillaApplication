@@ -1,8 +1,11 @@
 package com.example.ashishappv2.Fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ashishappv2.Domains.userData;
 import com.example.ashishappv2.R;
@@ -62,7 +66,7 @@ public class InfoPageFragment extends Fragment {
                         String link = user.getLink();
                         // Set shop name in the TextView
                         shopname.setText(ShopName);
-                        shopLink.setText("ashishweb-jv5n.onrender.com/"+link);
+                        shopLink.setText("https://ashishweb-jv5n.onrender.com/"+link);
                     }
                 }
             }
@@ -73,6 +77,22 @@ public class InfoPageFragment extends Fragment {
             }
         });
         return  view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        shopLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoUrl(shopLink.getText().toString());
+            }
+        });
+    }
+
+    private void gotoUrl(String s) {
+        Uri uri = Uri.parse(s);
+        startActivity(new Intent(Intent.ACTION_VIEW,uri));
     }
 
     private void makeLog(String s) {

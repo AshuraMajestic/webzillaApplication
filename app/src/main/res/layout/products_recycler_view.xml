@@ -6,6 +6,7 @@
     android:background="@drawable/product_bg"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:elevation="8dp"
+    android:layout_marginBottom="8dp"
     android:padding="16dp">
 
     <!-- Image -->
