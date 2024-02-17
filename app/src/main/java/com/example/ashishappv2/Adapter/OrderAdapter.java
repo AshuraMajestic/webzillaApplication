@@ -4,12 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.ashishappv2.Domains.OrderList;
 import com.example.ashishappv2.Domains.ProductInventory;
 import com.example.ashishappv2.R;
 
@@ -19,10 +21,10 @@ import java.util.Map;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
-    private List<ProductInventory> itemList;
+    private List<OrderList> itemList;
     private Context context;
 
-    public OrderAdapter(Context context, List<ProductInventory> itemList) {
+    public OrderAdapter(Context context, List<OrderList> itemList) {
         this.context = context;
         this.itemList = itemList;
     }
@@ -36,21 +38,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ProductInventory item = itemList.get(position);
-
-        holder.productNameTextView.setText(item.getName());
-        holder.categoryTextView.setText(item.getCategory());
-        holder.priceTextView.setText("₹"+item.getPrice()+" / "+item.getPieces());
-
-        Map<String, String> images = item.getImages();
-        if (images != null && !images.isEmpty()) {
-            String firstImageUrl = images.values().iterator().next();
-            Glide.with(context)
-                    .load(firstImageUrl)
-                    .centerCrop()
-                    .placeholder(R.mipmap.order_image)
-                    .into(holder.imageView);
-        }
+        OrderList item = itemList.get(position);
+        holder.orderNumber.setText("#"+item.getOrderNumber());
+        holder.dateTime.setText(item.getDate());
+        holder.Accepted.setText(item.getAccepted());
     }
 
     @Override
@@ -59,18 +50,28 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView productNameTextView;
-        TextView categoryTextView;
-        TextView priceTextView;
-
+        TextView orderNumber;
+        TextView dateTime;
+        TextView quantity;
+        TextView total;
+        TextView Payment;
+        ImageView dot;
+        TextView Accepted;
+        LinearLayout button;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            orderNumber=itemView.findViewById(R.id.orderNumber);
+            dateTime=itemView.findViewById(R.id.dateTime);
+            quantity=itemView.findViewById(R.id.quantity);
+            total=itemView.findViewById(R.id.orderPrice);
+            Payment=itemView.findViewById(R.id.paymentMethod);
+            dot=itemView.findViewById(R.id.dot);
+            Accepted=itemView.findViewById(R.id.accepted);
+            button=itemView.findViewById(R.id.Detail);
 
-            imageView = itemView.findViewById(R.id.imageView);
-            productNameTextView = itemView.findViewById(R.id.productName);
-            categoryTextView = itemView.findViewById(R.id.category);
-            priceTextView = itemView.findViewById(R.id.price);
+
+
+
         }
     }
 }

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.ashishappv2.Adapter.OrderAdapter;
+import com.example.ashishappv2.Domains.OrderList;
 import com.example.ashishappv2.Domains.ProductInventory;
 import com.example.ashishappv2.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +32,7 @@ public class OrderFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private OrderAdapter orderAdapter;
-    private List<ProductInventory> productList;
+    private List<OrderList> orderList;
     private FirebaseAuth mAuth;
     String ShopName;
     private FirebaseDatabase database;
@@ -59,14 +60,12 @@ public class OrderFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         recyclerView = view.findViewById(R.id.orderView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        productList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(getContext(), productList);
+        orderList = new ArrayList<>();
+        orderAdapter = new OrderAdapter(getContext(), orderList);
         recyclerView.setAdapter(orderAdapter);
-
         getShopName();
         return view;
     }
-
     private void getShopName() {
         String userId = mAuth.getCurrentUser().getUid();
 
@@ -76,8 +75,13 @@ public class OrderFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    ShopName = dataSnapshot.child("link").getValue(String.class).trim().toLowerCase();
-                    fetchUserData();
+                    ShopName = dataSnapshot.child("link").getValue(String.class);
+                    if (ShopName != null) {
+                        ShopName = ShopName.trim().toLowerCase();
+                        fetchUserData();
+                    } else {
+                        showToast("Shop name is null");
+                    }
                 } else {
                     showToast("User data not found");
                 }
@@ -89,7 +93,27 @@ public class OrderFragment extends Fragment {
             }
         });
     }
+    private void fetchUserData() {
+        DatabaseReference productRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+        productRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                orderList.clear();  // Clear existing data
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    OrderList product = snapshot.getValue(OrderList.class);
+                    if (product != null) {
+                        orderList.add(product);
+                    }
+                }
+                orderAdapter.notifyDataSetChanged();  // Notify adapter that data has changed
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("AshuraDB", error.toString());
+            }
+        });
+    }
     private void showToast(String userDataNotFound) {
         Toast.makeText(getContext(), userDataNotFound, Toast.LENGTH_SHORT).show();
     }
@@ -104,30 +128,6 @@ public class OrderFragment extends Fragment {
                 }
             }
         });
-    }
-    private void fetchUserData() {
-
-        DatabaseReference productRef = database.getReference().child("Shops").child(ShopName).child("Products");
-
-        // Query the database to get products for the current user
-        productRef
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        productList.clear();  // Clear existing data
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            ProductInventory product = snapshot.getValue(ProductInventory.class);
-                            Log.d("AshuraDB", "Product: " + product.toString());
-                            productList.add(product);
-                        }
-                        orderAdapter.notifyDataSetChanged();  // Notify adapter that data has changed
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("AshuraDB", error.toString());
-                    }
-                });
     }
 
 }
