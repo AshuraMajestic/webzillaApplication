@@ -1,9 +1,11 @@
 package com.example.ashishappv2.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,11 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.Toast;
 
 import com.example.ashishappv2.Adapter.OrderAdapter;
+import com.example.ashishappv2.Domains.OrderDetailActivity;
 import com.example.ashishappv2.Domains.OrderList;
-import com.example.ashishappv2.Domains.ProductInventory;
+
 import com.example.ashishappv2.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderFragment extends Fragment {
+public class OrderFragment extends Fragment implements OrderAdapter.OrderClickListener {
 
     private RecyclerView recyclerView;
     private OrderAdapter orderAdapter;
@@ -61,11 +65,12 @@ public class OrderFragment extends Fragment {
         recyclerView = view.findViewById(R.id.orderView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         orderList = new ArrayList<>();
-        orderAdapter = new OrderAdapter(getContext(), orderList);
+        orderAdapter = new OrderAdapter(getContext(), orderList, this);
         recyclerView.setAdapter(orderAdapter);
         getShopName();
         return view;
     }
+
     private void getShopName() {
         String userId = mAuth.getCurrentUser().getUid();
 
@@ -93,6 +98,7 @@ public class OrderFragment extends Fragment {
             }
         });
     }
+
     private void fetchUserData() {
         DatabaseReference productRef = database.getReference().child("Shops").child(ShopName).child("Orders");
         productRef.addValueEventListener(new ValueEventListener() {
@@ -114,15 +120,16 @@ public class OrderFragment extends Fragment {
             }
         });
     }
-    private void showToast(String userDataNotFound) {
-        Toast.makeText(getContext(), userDataNotFound, Toast.LENGTH_SHORT).show();
+
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-    private void setUpOnBackPressed(){
+    private void setUpOnBackPressed() {
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if(isEnabled()){
+                if (isEnabled()) {
                     setEnabled(false);
                     requireActivity().onBackPressed();
                 }
@@ -130,4 +137,12 @@ public class OrderFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onOrderClick(OrderList order) {
+        // Start new activity and pass order number
+
+        Intent intent = new Intent(getActivity(), OrderDetailActivity.class);
+        intent.putExtra("ORDER_NUMBER", order.getOrderNumber()+"");
+        startActivity(intent);
+    }
 }
