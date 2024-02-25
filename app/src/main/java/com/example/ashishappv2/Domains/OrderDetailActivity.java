@@ -2,16 +2,20 @@ package com.example.ashishappv2.Domains;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ashishappv2.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,6 +32,8 @@ public class OrderDetailActivity extends AppCompatActivity {
     private TextView OrderNumber,dateTime,accepted,itemCount,itemTotal,Grandtotal;
     private  TextView name,email,phone,address,city,pinCode,state,paymentMethod,payementType;
     ImageView dot;
+    AppCompatButton accept;
+    TextView reject;
     private String ShopName,orderNumber;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
@@ -61,6 +67,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         payementType=findViewById(R.id.paymentType);
         paymentMethod=findViewById(R.id.paymentMethod);
         dot=findViewById(R.id.dot);
+        accept=findViewById(R.id.AcceptBtn);
+        reject = findViewById(R.id.rejectOrderButton);
         getShopName();
         recyclerViewCartItems = findViewById(R.id.itemRecyler);
         recyclerViewCartItems.setLayoutManager(new LinearLayoutManager(this));
@@ -135,7 +143,15 @@ public class OrderDetailActivity extends AppCompatActivity {
                         city.setText(orderList.getCity()+"");
                         pinCode.setText(orderList.getZipCode()+"");
                         state.setText(orderList.getState()+"");
-
+                        accept.setText("Ship Order");
+                        reject.setText("Cancel Order");
+                        accept.setBackgroundColor(getResources().getColor(R.color.btnorange));
+                        accept.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(OrderDetailActivity.this, "Shipped", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }else{
                         dot.setImageResource(R.drawable.orange_dot);
                         name.setText("**********");
@@ -145,6 +161,65 @@ public class OrderDetailActivity extends AppCompatActivity {
                         city.setText("******");
                         pinCode.setText("******");
                         state.setText("******");
+                        reject.setText("Reject Order");
+                        reject.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                OrderRef.removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // Order deleted successfully
+                                                Toast.makeText(OrderDetailActivity.this, "Order deleted", Toast.LENGTH_SHORT).show();
+                                                onBackPressed(); // Go back to the previous fragment or activity
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Handle any errors
+                                                Toast.makeText(OrderDetailActivity.this, "Failed to delete order", Toast.LENGTH_SHORT).show();
+                                                Log.e("OrderDetailActivity", "Failed to delete order", e);
+                                            }
+                                        });
+                                onBackPressed();
+                            }
+                        });
+
+                        accept.setText("Accept Order");
+
+
+                        accept.setBackgroundColor(getResources().getColor(R.color.btngreen));
+                        accept.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                OrderRef.child("accepted").setValue("accepted")
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                dot.setImageResource(R.drawable.green_dot);
+                                                name.setText(orderList.getFirstName()+" " + orderList.getLastName());
+                                                email.setText(orderList.getEmail()+"");
+                                                phone.setText(orderList.getNumber()+"");
+                                                address.setText(orderList.getAddress()+"");
+                                                city.setText(orderList.getCity()+"");
+                                                pinCode.setText(orderList.getZipCode()+"");
+                                                state.setText(orderList.getState()+"");
+                                                accept.setText("Ship Order");
+                                                accept.setBackgroundColor(getResources().getColor(R.color.btnorange));
+                                                reject.setText("Cancel Order");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Handle any errors, show a toast message or log the error
+                                                Toast.makeText(OrderDetailActivity.this, "Failed to accept order", Toast.LENGTH_SHORT).show();
+                                                Log.e("OrderDetailActivity", "Failed to accept order", e);
+                                            }
+                                        });
+                            }
+                        });
                     }
                     payementType.setText(orderList.getPaymentOption());
                     if(orderList.getPaymentOption().equals("Cash On Delivery")){

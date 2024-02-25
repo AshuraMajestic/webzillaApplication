@@ -309,7 +309,7 @@ class Item {
     private String productImage;
     private String productName;
     private int productPrice;
-    private String quantity;
+    private int quantity;
     private int subtotal;
 
     public Item() {
@@ -317,7 +317,7 @@ class Item {
 
     ;
 
-    public Item(String productImage, String productName, int productPrice, String quantity, int subtotal) {
+    public Item(String productImage, String productName, int productPrice, int quantity, int subtotal) {
         this.productImage = productImage;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -350,11 +350,11 @@ class Item {
         this.productPrice = productPrice;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 

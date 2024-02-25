@@ -20,14 +20,7 @@
         <activity
             android:name=".Domains.OrderDetailActivity"
             android:exported="false" />
-        <activity
-            android:name=".Domains.OrderDetailActicity"
-            android:exported="false"
-            android:label="@string/title_activity_order_detail_acticity"
-            android:theme="@style/Theme.AshishAppV2" />
-        <activity
-            android:name=".Activity.OrderDetailActivity"
-            android:exported="false" />
+
         <activity
             android:name=".Activity.InventoryActivity"
             android:exported="false" />
@@ -36,9 +29,6 @@
             android:exported="false" />
         <activity
             android:name=".Activity.AddLogo"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.AddVideo"
             android:exported="false" />
         <activity
             android:name=".Activity.AddPhoto"

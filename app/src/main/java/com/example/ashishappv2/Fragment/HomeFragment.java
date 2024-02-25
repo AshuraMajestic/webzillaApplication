@@ -1,5 +1,7 @@
 package com.example.ashishappv2.Fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -14,11 +16,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ashishappv2.Adapter.videoAdapter;
 import com.example.ashishappv2.Domains.Product;
+import com.example.ashishappv2.Domains.userData;
 import com.example.ashishappv2.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,18 +33,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
 
-    private DatabaseReference videoRef;
-    private List<Product> videoList;
-    private videoAdapter videoAdapter;
-    private RecyclerView recyclerView;
-    private ProgressBar loadingView;
-
-    private int currentPage = 1;
-    private static final int PAGE_SIZE = 10;
-
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference userRef;
+    private TextView shopname,shopLink;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -50,109 +51,61 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        View view= inflater.inflate(R.layout.fragment_home, container, false);
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+        shopname = view.findViewById(R.id.name);
+        shopLink=view.findViewById(R.id.link);
 
-        videoRef = FirebaseDatabase.getInstance().getReference().child("productvideo");
-        videoList = new ArrayList<>();
-
-        recyclerView = view.findViewById(R.id.vertical);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        videoAdapter = new videoAdapter(videoList);
-        recyclerView.setAdapter(videoAdapter);
-        loadingView = view.findViewById(R.id.loadingView);
-        showLoadingScreen();
-
-        // Set up Firebase Database listener
-        loadVideos();
-
-        return view;
-    }
-
-    private void loadVideos() {
-        videoRef.orderByKey().startAt(String.valueOf((currentPage - 1) * PAGE_SIZE)).limitToFirst(PAGE_SIZE)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            List<Product> newDataList = new ArrayList<>();
-
-                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                // Ensure all necessary fields are present
-                                if (dataSnapshot.child("name").exists()
-                                        && dataSnapshot.child("category").exists()
-                                        && dataSnapshot.child("price").exists()
-                                        && dataSnapshot.child("pieces").exists()
-                                        && dataSnapshot.child("userEmail").exists()
-                                        && dataSnapshot.child("video").exists()) {
-
-                                    Product video = new Product();
-                                    video.setName(dataSnapshot.child("name").getValue(String.class));
-                                    video.setCategory(dataSnapshot.child("category").getValue(String.class));
-                                    video.setPrice(dataSnapshot.child("price").getValue(String.class));
-                                    video.setPieces(dataSnapshot.child("pieces").getValue(String.class));
-                                    video.setUserEmail(dataSnapshot.child("userEmail").getValue(String.class));
-                                    video.setVideoUrl(dataSnapshot.child("video").getValue(String.class));
-
-                                    newDataList.add(video);
-                                } else {
-                                    Log.e("FirebaseError", "Incomplete data for video: " + dataSnapshot.getKey());
-                                }
-                            }
-
-                            // Reverse the order of newDataList before adding it to the adapter
-                            Collections.reverse(newDataList);
-
-                            // Increment the current page for the next load
-                            currentPage++;
-
-                            // Add new data to the existing list
-                            videoAdapter.addData(newDataList);
-                            hideLoadingScreen();
-                        } else {
-                            hideLoadingScreen();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("FirebaseError", "Failed to load videos: " + error.getMessage());
-                        showToast("Failed to load videos");
-                        hideLoadingScreen();
-                    }
-                });
-    }
-
-    private void showMessage(String string) {
-        Log.d("AshuraDB", string);
-    }
-
-    private void hideLoadingScreen() {
-        if (loadingView != null) {
-            loadingView.setVisibility(View.GONE);
-        }
-    }
-
-    private void showLoadingScreen() {
-        if (loadingView != null) {
-            loadingView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void setUpOnBackPressed() {
-        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+        userRef = FirebaseDatabase.getInstance().getReference().child("UserData").child(userId);
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void handleOnBackPressed() {
-                if (isEnabled()) {
-                    setEnabled(false);
-                    requireActivity().onBackPressed();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    userData user = dataSnapshot.getValue(userData.class);
+                    if (user != null) {
+                        String ShopName = user.getShopname();
+                        String link = user.getLink();
+                        // Set shop name in the TextView
+                        shopname.setText(ShopName);
+                        shopLink.setText("https://ashishweb-jv5n.onrender.com/"+link);
+                    }
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving data: " + databaseError.getMessage());
+            }
+        });
+        return  view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        shopLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoUrl(shopLink.getText().toString());
             }
         });
     }
 
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    private void gotoUrl(String s) {
+        Uri uri = Uri.parse(s);
+        startActivity(new Intent(Intent.ACTION_VIEW,uri));
+    }
+
+    private void makeLog(String s) {
+        Log.d("AshuraDB", s);
     }
 }

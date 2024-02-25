@@ -65,30 +65,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layoutVideo"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/video"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Video"
-            android:layout_gravity="center_vertical"
-            android:textColor="@color/green"
-            android:layout_marginLeft="30dp"
-            android:textSize="16sp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/layoutLogo"
         android:orientation="horizontal"
         android:layout_width="match_parent"

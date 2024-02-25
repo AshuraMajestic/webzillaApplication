@@ -4,9 +4,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="view_Back">#41DBD2</color>
     <color name="grey">#858585</color>
-
     <color name="greyish">#D6D6D6</color>
     <color name="green">#802EEC</color>
+    <color name="btngreen">#16B31A</color>
+    <color name="btnorange">#EE741F</color>
     <color name="go">#07DA00</color>
     <color name="red">#A30000</color>
     <color name="transparent">#00D6BBDD</color>

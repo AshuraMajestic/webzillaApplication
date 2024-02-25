@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.ashishappv2.Fragment.HomeFragment;
-import com.example.ashishappv2.Fragment.InfoPageFragment;
 import com.example.ashishappv2.Fragment.OrderFragment;
 import com.example.ashishappv2.Fragment.PlusFragment;
 import com.example.ashishappv2.Fragment.ProfileFragment;
@@ -49,24 +48,20 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.home) {
-                    replace(new HomeFragment());
-                    return true;
+                    if(!isUserRegistered()) {
+                        replace(new PlusFragment());
+                        return false;
+                    } else {
+                        replace(new HomeFragment());
+                        return true;
+                    }
                 } else if (id == R.id.plus) {
                     if(!isUserRegistered()) {
                         replace(new PlusFragment());
                         return true;
                     } else {
-                        InfoPageFragment infoPageFragment = (InfoPageFragment) getSupportFragmentManager().findFragmentByTag(InfoPageFragment.class.getSimpleName());
-
-                        if (infoPageFragment != null && infoPageFragment.isVisible()) {
                             showPopUp();
                             return false;
-                        } else {
-                            // InfoPageFragment is not added, replace it and show the popup
-                            replace(new InfoPageFragment());
-                            showPopUp();
-                            return true;
-                        }
                     }
                 } else if (id == R.id.profile) {
                     if(!isUserRegistered()) {
@@ -101,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
         final Dialog dialog= new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.bottomdialog);
-
-        LinearLayout videoLayout = dialog.findViewById(R.id.layoutVideo);
         LinearLayout imageLayout = dialog.findViewById(R.id.layoutImage);
         LinearLayout logoLayout = dialog.findViewById(R.id.layoutLogo);
         LinearLayout inventoryLayout=dialog.findViewById(R.id.layoutInventory);
@@ -115,17 +108,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 dialog.dismiss();
-            }
-        });
-        videoLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(getApplicationContext(),AddVideo.class);
-                startActivity(intent);
-                finish();
-                dialog.dismiss();
-
-
             }
         });
 
