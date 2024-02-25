@@ -10,18 +10,18 @@
         android:icon="@drawable/home"/>
 
     <item
-        android:id="@+id/search"
-        android:title="Search"
-        android:icon="@drawable/search_svgrepo_com"/>
+        android:id="@+id/Order"
+        android:title="Order"
+        android:icon="@drawable/stack2_svgrepo_com"/>
 
     <item
         android:id="@+id/plus"
         tools:ignore="MenuTitle" />
 
     <item
-        android:id="@+id/Order"
-        android:title="Order"
-        android:icon="@drawable/stack2_svgrepo_com"/>
+        android:id="@+id/empty"
+        android:title="Empty"
+        android:icon="@drawable/lock"/>
 
     <item
         android:id="@+id/profile"

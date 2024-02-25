@@ -20,6 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.ashishappv2.Fragment.EmptyFragment;
 import com.example.ashishappv2.Fragment.HomeFragment;
 import com.example.ashishappv2.Fragment.OrderFragment;
 import com.example.ashishappv2.Fragment.PlusFragment;
@@ -83,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 }
-                else if(id==R.id.search){
-                    replace(new SearchFragment());
+                else if(id==R.id.empty){
+                    replace(new EmptyFragment());
                     return true;
                 }
                 return false;
