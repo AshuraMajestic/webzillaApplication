@@ -42,7 +42,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         bottomBar = findViewById(R.id.bottomNavigationView);
-        replace(new HomeFragment());
+        if(!isUserRegistered()) {
+            replace(new PlusFragment());
+        } else {
+            replace(new HomeFragment());
+        }
 
         bottomBar.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -51,11 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 if (id == R.id.home) {
                     if(!isUserRegistered()) {
                         replace(new PlusFragment());
-                        return false;
                     } else {
                         replace(new HomeFragment());
-                        return true;
                     }
+                    return true;
                 } else if (id == R.id.plus) {
                     if(!isUserRegistered()) {
                         replace(new PlusFragment());
