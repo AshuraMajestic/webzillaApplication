@@ -22,6 +22,7 @@ public class InventoryActivity extends AppCompatActivity {
         viewPager2=findViewById(R.id.viewPager);
         viewPagerAdpater=new ViewPagerAdpater(this);
         viewPager2.setAdapter(viewPagerAdpater);
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

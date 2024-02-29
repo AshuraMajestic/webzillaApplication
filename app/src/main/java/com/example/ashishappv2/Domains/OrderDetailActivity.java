@@ -6,16 +6,33 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ashishappv2.Activity.AddLogo;
+import com.example.ashishappv2.Activity.AddPhoto;
+import com.example.ashishappv2.Activity.InventoryActivity;
+import com.example.ashishappv2.Activity.OrderPlacedActivity;
 import com.example.ashishappv2.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -145,11 +162,43 @@ public class OrderDetailActivity extends AppCompatActivity {
                         state.setText(orderList.getState()+"");
                         accept.setText("Ship Order");
                         reject.setText("Cancel Order");
+
+
+                        reject.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                OrderRef.child("accepted").setValue("pending")
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                dot.setImageResource(R.drawable.orange_dot);
+                                                name.setText("**********");
+                                                email.setText("**********");
+                                                phone.setText("**********");
+                                                address.setText("**********");
+                                                city.setText("******");
+                                                pinCode.setText("******");
+                                                state.setText("******");
+                                                reject.setText("Reject Order");
+                                                accept.setText("Accept Order");
+                                                accept.setBackgroundColor(getResources().getColor(R.color.btngreen));
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Handle any errors, show a toast message or log the error
+                                                Toast.makeText(OrderDetailActivity.this, "Failed to accept order", Toast.LENGTH_SHORT).show();
+                                                Log.e("OrderDetailActivity", "Failed to accept order", e);
+                                            }
+                                        });
+                            }
+                        });
                         accept.setBackgroundColor(getResources().getColor(R.color.btnorange));
                         accept.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Toast.makeText(OrderDetailActivity.this, "Shipped", Toast.LENGTH_SHORT).show();
+                            showPopUp();
                             }
                         });
                     }else{
@@ -162,6 +211,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                         pinCode.setText("******");
                         state.setText("******");
                         reject.setText("Reject Order");
+
                         reject.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -240,6 +290,83 @@ public class OrderDetailActivity extends AppCompatActivity {
             }
         });
     }
+    private void showPopUp() {
+        final Dialog dialog= new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.ship_dialog);
+        ImageView cancelButton=dialog.findViewById(R.id.cancelButton);
+        RadioGroup radioGroup = dialog.findViewById(R.id.radioGroup);
+        RadioButton radioButton1 = dialog.findViewById(R.id.radioButton1);
+        RadioButton radioButton2 = dialog.findViewById(R.id.radioButton2);
+        AppCompatButton btn = dialog.findViewById(R.id.proceedButton);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the ID of the selected radio button
+                int selectedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+
+                // Perform action based on the selected radio button
+                if (selectedRadioButtonId == radioButton1.getId()) {
+                    // Action for radioButton1
+                  showapiDialog();
+                    // Add your code here to handle the action for radioButton1
+                } else if (selectedRadioButtonId == radioButton2.getId()) {
+                    Intent intent = new Intent(getApplicationContext(), OrderPlacedActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please select a shipping option", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
+
+    private void showapiDialog() {
+        final Dialog dialog= new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.api_dialog);
+        ImageView cancelButton=dialog.findViewById(R.id.cancelButton);
+        TextInputLayout email=dialog.findViewById(R.id.mailAPI);
+        TextInputLayout pass = dialog.findViewById(R.id.passAPI);
+        AppCompatButton connect= dialog.findViewById(R.id.connectButton);
+
+        connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), OrderPlacedActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        dialog.getWindow().setGravity(Gravity.CENTER);
+
+    }
+
 
     private void showToast(String userDataNotFound) {
         Toast.makeText(this, userDataNotFound, Toast.LENGTH_SHORT).show();

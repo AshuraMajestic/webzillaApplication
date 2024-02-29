@@ -30,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class OrderFragment extends Fragment implements OrderAdapter.OrderClickListener {
@@ -111,6 +112,7 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderClickLi
                         orderList.add(product);
                     }
                 }
+                Collections.reverse(orderList);
                 orderAdapter.notifyDataSetChanged();  // Notify adapter that data has changed
             }
 
