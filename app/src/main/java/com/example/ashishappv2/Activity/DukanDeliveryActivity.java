@@ -1,6 +1,7 @@
 package com.example.ashishappv2.Activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
@@ -11,9 +12,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ashishappv2.Domains.DeliveryData;
@@ -57,6 +60,7 @@ public class DukanDeliveryActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private String ShopName,selectedState;
     private DatabaseReference userRef;
+    TextView terms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,14 @@ public class DukanDeliveryActivity extends AppCompatActivity {
         gstNumberEditText = findViewById(R.id.gstNumber);
         acceptTermsCheckBox = findViewById(R.id.checkBoxAcceptTerms);
         update=findViewById(R.id.updateData);
+        terms=findViewById(R.id.terms);
+        terms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTermsDialog();
+            }
+        });
+
         state.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -153,6 +165,27 @@ public class DukanDeliveryActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+    private void showTermsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.termsdialog, null);
+        builder.setView(dialogView);
+
+        TextView dialogContent = dialogView.findViewById(R.id.termsTextView);
+        Button dialogCloseButton = dialogView.findViewById(R.id.closeButton);
+
+        dialogContent.setText(getString(R.string.termsandcondition));
+
+        AlertDialog dialog = builder.create();
+
+        dialogCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     private void getshopName() {
