@@ -3,33 +3,30 @@ package com.example.ashishappv2.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.ashishappv2.Adapter.videoAdapter;
+import android.widget.LinearLayout;
+
+import android.widget.TextView;
+
+
+
 import com.example.ashishappv2.Domains.OrderList;
-import com.example.ashishappv2.Domains.Product;
+
 import com.example.ashishappv2.Domains.userData;
 import com.example.ashishappv2.R;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,11 +46,13 @@ import java.util.Objects;
 public class HomeFragment extends Fragment {
 
     private FirebaseAuth mAuth;
+    private LinearLayout sessionLayout,salesLayout,orderLayout;
+    private LinearLayout salesShowLayout,orderShowLayout,SessionshowLayout;
     private FirebaseDatabase database;
     private String ShopName;
     private DatabaseReference userRef;
     private TextView shopname, shopLink, siteVisitCount, totalSales, totalOrder;
-    private LineChart visitorChart;
+
     private AppCompatButton allTime, Last30, Last7, today;
 
     public HomeFragment() {
@@ -72,20 +71,23 @@ public class HomeFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-        shopname = view.findViewById(R.id.name);
-        shopLink = view.findViewById(R.id.link);
-        siteVisitCount = view.findViewById(R.id.SiteSession);
-        totalSales = view.findViewById(R.id.TotalSales);
-        totalOrder = view.findViewById(R.id.totalOrder);
         allTime = view.findViewById(R.id.alltime);
         Last30 = view.findViewById(R.id.last30days);
         Last7 = view.findViewById(R.id.last7days);
         today = view.findViewById(R.id.today);
-        visitorChart = view.findViewById(R.id.visitor_chart);
-        visitorChart.setDrawGridBackground(false);
-        visitorChart.setBackgroundColor(Color.TRANSPARENT);
-        updateGraph(0);
-disableButtons();
+        sessionLayout=view.findViewById(R.id.siteSessionLayout);
+        shopname = view.findViewById(R.id.name);
+        shopLink = view.findViewById(R.id.link);
+        siteVisitCount = view.findViewById(R.id.SiteSession);
+
+        totalSales = view.findViewById(R.id.TotalSales);
+        totalOrder = view.findViewById(R.id.totalOrder);
+        salesLayout=view.findViewById(R.id.salesLayout);
+        orderLayout=view.findViewById(R.id.orderLayout);
+        orderShowLayout=view.findViewById(R.id.orderShow);
+        SessionshowLayout=view.findViewById(R.id.siteShow);
+        salesShowLayout=view.findViewById(R.id.salesShow);
+        disableButtons();
         userRef = FirebaseDatabase.getInstance().getReference().child("UserData").child(userId);
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -111,36 +113,46 @@ disableButtons();
             }
         });
 
+        sessionLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (SessionshowLayout.getVisibility() == View.VISIBLE) {
+                    SessionshowLayout.setVisibility(View.GONE);
+                } else {
+                    SessionshowLayout.setVisibility(View.VISIBLE);
+
+
+                }
+            }
+        });
+
+        orderLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (orderShowLayout.getVisibility() == View.VISIBLE) {
+                    orderShowLayout.setVisibility(View.GONE);
+                } else {
+                    orderShowLayout.setVisibility(View.VISIBLE);
+
+                }
+            }
+        });
+
+        salesLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (salesShowLayout.getVisibility() == View.VISIBLE) {
+                    salesShowLayout.setVisibility(View.GONE);
+                } else {
+                    salesShowLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
         return view;
     }
 
-    private void updateGraph(long count) {
-        // Create entries for the line chart
-        ArrayList<Entry> entries = new ArrayList<>();
-
-        // Add a point at (0, 0) to draw a straight line
-        entries.add(new Entry(0, 0));
-
-        // Create a dataset with entries
-        LineDataSet dataSet = new LineDataSet(entries, "Visitor Count");
-        dataSet.setColor(Color.BLUE); // Set line color
-
-        LineData lineData = new LineData(dataSet);
-        // Customize the line chart
-        Description desc = new Description();
-        desc.setEnabled(false); // Hide description
-        visitorChart.setDescription(desc);
-        visitorChart.setData(lineData);
-        visitorChart.setGridBackgroundColor(Color.TRANSPARENT);
-        visitorChart.setDrawBorders(false);
-        visitorChart.setDrawGridBackground(false);
-        visitorChart.getLegend().setEnabled(false); // Hide legend
-        visitorChart.getAxisLeft().setDrawLabels(false); // Hide left axis labels
-        visitorChart.getAxisRight().setDrawLabels(false); // Hide right axis labels
-        visitorChart.getXAxis().setDrawLabels(false); // Hide x-axis labels
-        visitorChart.setDrawBorders(false); // Hide chart borders
-        visitorChart.invalidate(); // Refresh the chart
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -174,14 +186,13 @@ disableButtons();
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DAY_OF_YEAR, -30); // Go back 30 days from today
                 String startDate = getFormattedDate(calendar.getTimeInMillis());
-                updateVisitorCount(startDate);
+                updateVisitorCountLast30Days();
 
                 // Query the database for orders within the last 30 days
                 DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
                 orderRef.orderByChild("date").startAt(startDate).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Log.d("AshuraDB",dataSnapshot+"");
                         int orderCount = 0;
                         double totalSalesAmount = 0;
                         // Iterate through the orders and calculate total sales and order count
@@ -217,12 +228,11 @@ disableButtons();
                 Last7.setTextColor(Color.BLACK);
                 today.setBackgroundResource(R.drawable.background_last_normal);
                 today.setTextColor(Color.GRAY);
-
+                updateVisitorCountLast7Days();
                 // Calculate the start date for the last 7 days
                 Calendar calendar = Calendar.getInstance();
                 calendar.add(Calendar.DAY_OF_YEAR, -7); // Go back 7 days from today
                 String startDate = getFormattedDate(calendar.getTimeInMillis());
-                updateVisitorCount(startDate);
 
                 // Query the database for orders within the last 7 days
                 DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
@@ -300,6 +310,110 @@ disableButtons();
             }
         });
     }
+    private void updateVisitorCountLast7Days() {
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.getDefault());
+
+        // Create a list to hold visitor counts for the last 7 days
+        List<Long> visitorCounts = new ArrayList<>();
+
+        // Iterate over the last 7 days
+        for (int i = 0; i < 7; i++) {
+            // Calculate the date for the current iteration
+            String date = dateFormat.format(calendar.getTime());
+
+            // Retrieve the visitor count for the current date and shop
+            DatabaseReference visitorRef = database.getReference()
+                    .child("VisitorCounts")
+                    .child(ShopName) // Change to your shop name
+                    .child(date);
+
+            visitorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    long visitorCount = 0; // Default visitor count to 0
+                    if (dataSnapshot.exists()) {
+                        visitorCount = dataSnapshot.getValue(Long.class);
+                    }
+                    visitorCounts.add(visitorCount);
+
+                    // Check if all visitor counts for the last 7 days have been retrieved
+                    if (visitorCounts.size() == 7) {
+                        // Calculate the total visitor count for the last 7 days
+                        long totalVisitorCount = 0;
+                        for (Long count : visitorCounts) {
+                            totalVisitorCount += count;
+                        }
+                        // Update UI with the total visitor count for the last 7 days
+                        siteVisitCount.setText(String.valueOf(totalVisitorCount));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    makeLog("Error retrieving visitor count: " + databaseError.getMessage());
+                }
+            });
+
+            // Move to the previous day
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
+        }
+    }
+
+    private void updateVisitorCountLast30Days() {
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.getDefault());
+
+        // Create a list to hold visitor counts for the last 30 days
+        List<Long> visitorCounts = new ArrayList<>();
+
+        // Iterate over the last 30 days
+        for (int i = 0; i < 30; i++) {
+            // Calculate the date for the current iteration
+            String date = dateFormat.format(calendar.getTime());
+
+            // Retrieve the visitor count for the current date and shop
+            DatabaseReference visitorRef = database.getReference()
+                    .child("VisitorCounts")
+                    .child(ShopName) // Change to your shop name
+                    .child(date);
+
+            final int finalI = i; // To access within inner class
+
+            visitorRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    long visitorCount = 0; // Default visitor count to 0
+                    if (dataSnapshot.exists()) {
+                        visitorCount = dataSnapshot.getValue(Long.class);
+                    }
+                    visitorCounts.add(visitorCount);
+
+                    // Check if all visitor counts for the last 30 days have been retrieved
+                    if (finalI == 29) {
+                        // Calculate the total visitor count for the last 30 days
+                        long totalVisitorCount = 0;
+                        for (Long count : visitorCounts) {
+                            totalVisitorCount += count;
+                        }
+                        // Update UI with the total visitor count for the last 30 days
+                        siteVisitCount.setText(String.valueOf(totalVisitorCount));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    makeLog("Error retrieving visitor count: " + databaseError.getMessage());
+                }
+            });
+
+            // Move to the previous day
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
+        }
+    }
+
 
     private void setAllTime() {
         allTime.setBackgroundResource(R.drawable.background_last_pressed);
@@ -409,7 +523,6 @@ disableButtons();
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_YEAR, -30); // Go back 30 days from today
             Date last30DaysDate = calendar.getTime();
-            Log.d("AshuraDB",last30DaysDate+"");
             return orderDateTime.after(last30DaysDate) || orderDateTime.equals(last30DaysDate);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -447,11 +560,15 @@ disableButtons();
             }
         });
     }
+
     private void enableButtons() {
         allTime.setEnabled(true);
         Last30.setEnabled(true);
         Last7.setEnabled(true);
         today.setEnabled(true);
+        sessionLayout.setEnabled(true);
+        orderLayout.setEnabled(true);
+        salesLayout.setEnabled(true);
     }
 
     private void disableButtons() {
@@ -459,6 +576,10 @@ disableButtons();
         Last30.setEnabled(false);
         Last7.setEnabled(false);
         today.setEnabled(false);
+
+        sessionLayout.setEnabled(false);
+        orderLayout.setEnabled(false);
+        salesLayout.setEnabled(false);
     }
     private void makeLog(String s) {
         Log.d("AshuraDB", s);

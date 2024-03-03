@@ -73,4 +73,16 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="warehouse">Warehouse Name <font color="red">*</font></string>
+    <string name="contact">Contact Person <font color="red">*</font></string>
+    <string name="number2">Mobile Number <font color="red">*</font></string>
+    <string name="flatno">Flat,House no., Building, Company, Apartment <font color="red">*</font></string>
+    <string name="Area">Area, Colony, Street, Sector, Village</string>
+    <string name="pin">Pin Code <font color="red">*</font></string>
+    <string name="City">City <font color="red">*</font></string>
+    <string name="state">State <font color="red">*</font></string>
+    <string name="GST">GST Number</string>
+
+
+
 </resources>

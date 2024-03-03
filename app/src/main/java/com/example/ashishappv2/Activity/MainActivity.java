@@ -20,12 +20,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.ashishappv2.Fragment.EmptyFragment;
+import com.example.ashishappv2.Fragment.ManageFragment;
 import com.example.ashishappv2.Fragment.HomeFragment;
 import com.example.ashishappv2.Fragment.OrderFragment;
 import com.example.ashishappv2.Fragment.PlusFragment;
 import com.example.ashishappv2.Fragment.ProfileFragment;
-import com.example.ashishappv2.Fragment.SearchFragment;
 import com.example.ashishappv2.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -87,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 }
-                else if(id==R.id.empty){
-                    replace(new EmptyFragment());
+                else if(id==R.id.manage){
+                    replace(new ManageFragment());
                     return true;
                 }
                 return false;
