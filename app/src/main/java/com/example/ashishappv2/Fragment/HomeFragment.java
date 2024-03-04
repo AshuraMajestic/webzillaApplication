@@ -20,13 +20,20 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import android.widget.TextView;
-
+import android.widget.Toast;
 
 
 import com.example.ashishappv2.Domains.OrderList;
 
 import com.example.ashishappv2.Domains.userData;
 import com.example.ashishappv2.R;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,9 +41,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +63,7 @@ public class HomeFragment extends Fragment {
     private TextView shopname, shopLink, siteVisitCount, totalSales, totalOrder;
 
     private AppCompatButton allTime, Last30, Last7, today;
+    LineChart lineChart;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -79,7 +89,6 @@ public class HomeFragment extends Fragment {
         shopname = view.findViewById(R.id.name);
         shopLink = view.findViewById(R.id.link);
         siteVisitCount = view.findViewById(R.id.SiteSession);
-
         totalSales = view.findViewById(R.id.TotalSales);
         totalOrder = view.findViewById(R.id.totalOrder);
         salesLayout=view.findViewById(R.id.salesLayout);
@@ -87,31 +96,11 @@ public class HomeFragment extends Fragment {
         orderShowLayout=view.findViewById(R.id.orderShow);
         SessionshowLayout=view.findViewById(R.id.siteShow);
         salesShowLayout=view.findViewById(R.id.salesShow);
-        disableButtons();
-        userRef = FirebaseDatabase.getInstance().getReference().child("UserData").child(userId);
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    userData user = dataSnapshot.getValue(userData.class);
-                    if (user != null) {
-                        String shopName = user.getShopname();
-                        String link = user.getLink();
-                        ShopName = link;
-                        enableButtons();
-                        shopname.setText(shopName);
-                        shopLink.setText("https://ashishweb-jv5n.onrender.com/" + link);
-                        setAllTime();
-                        // Set shop name in the TextView
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                makeLog("Error retrieving data: " + databaseError.getMessage());
-            }
-        });
+        lineChart = view.findViewById(R.id.lineChart);
+        disableButtons();
+        getShopName();
+
 
         sessionLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +141,36 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
+    private void getShopName() {
+        String userId = mAuth.getCurrentUser().getUid();
 
+        DatabaseReference userRef = database.getReference("UserData").child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ShopName = dataSnapshot.child("link").getValue(String.class).trim().toLowerCase();
+                    String shopName=dataSnapshot.child("shopname").getValue(String.class);
+                    enableButtons();
+                    shopname.setText(shopName);
+                    shopLink.setText("https://ashishweb-jv5n.onrender.com/" + ShopName);
+                    setAllTime();
+                } else {
+                    showToast("User data not found");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                showToast("Error retrieving user data");
+            }
+        });
+    }
+
+    private void showToast(String userDataNotFound) {
+        Toast.makeText(getContext(), userDataNotFound, Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -310,6 +328,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     private void updateVisitorCountLast7Days() {
         // Get the current date
         Calendar calendar = Calendar.getInstance();
@@ -435,6 +454,7 @@ public class HomeFragment extends Fragment {
                     if (orderCount != null) {
                         totalOrder.setText(orderCount);
                     }
+
                 }
             }
 
@@ -472,6 +492,7 @@ public class HomeFragment extends Fragment {
                     if (siteCount != null) {
                         siteVisitCount.setText(siteCount);
                     }
+
                 }
             }
 
@@ -480,9 +501,49 @@ public class HomeFragment extends Fragment {
                 makeLog("Error retrieving order count: " + databaseError.getMessage());
             }
         });
+        fetchDataFromFirebase();
     }
 
+    private void fetchDataFromFirebase() {
+        FirebaseDatabase.getInstance().getReference("VisitorCounts").child(ShopName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Entry> dataVals = new ArrayList<>();
+                ArrayList<String> labels = new ArrayList<>(); // to store x-axis labels
+                int index = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String date = snapshot.getKey();
+                    Long count = snapshot.getValue(Long.class); // Correctly retrieve Long value
+                    dataVals.add(new Entry(index++, count));
+                    labels.add(date); // Adding date as a label
+                }
 
+                setupLineChart(dataVals, labels);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+    }
+
+    private void setupLineChart(ArrayList<Entry> dataVals, ArrayList<String> labels) {
+        LineDataSet lineDataSet = new LineDataSet(dataVals, "Visitor Counts");
+        LineData data = new LineData(lineDataSet);
+        lineChart.setData(data);
+
+        // Hide y-axis labels
+        YAxis yAxis = lineChart.getAxisLeft();
+        yAxis.setDrawLabels(false);
+
+        // Customize x-axis labels
+        XAxis xAxis = lineChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labels)); // Set custom value formatter for x-axis
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
+
+        lineChart.invalidate();
+    }
     private void updateVisitorCount(String date) {
         DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName).child(date);
         visitorRef.addListenerForSingleValueEvent(new ValueEventListener() {

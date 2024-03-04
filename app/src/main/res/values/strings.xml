@@ -82,7 +82,7 @@
     <string name="City">City <font color="red">*</font></string>
     <string name="state">State <font color="red">*</font></string>
     <string name="GST">GST Number</string>
-
+    <string name="Site">SiteCount</string>
 
 
 </resources>
