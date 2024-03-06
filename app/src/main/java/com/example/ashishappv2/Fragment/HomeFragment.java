@@ -56,14 +56,14 @@ public class HomeFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private LinearLayout sessionLayout,salesLayout,orderLayout;
-    private LinearLayout salesShowLayout,orderShowLayout,SessionshowLayout;
+    private LinearLayout salesShowLayout,SessionshowLayout;
     private FirebaseDatabase database;
     private String ShopName;
-    private DatabaseReference userRef;
+
     private TextView shopname, shopLink, siteVisitCount, totalSales, totalOrder;
 
     private AppCompatButton allTime, Last30, Last7, today;
-    LineChart lineChart;
+    LineChart lineChart,lineChart2;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -93,11 +93,12 @@ public class HomeFragment extends Fragment {
         totalOrder = view.findViewById(R.id.totalOrder);
         salesLayout=view.findViewById(R.id.salesLayout);
         orderLayout=view.findViewById(R.id.orderLayout);
-        orderShowLayout=view.findViewById(R.id.orderShow);
+
         SessionshowLayout=view.findViewById(R.id.siteShow);
         salesShowLayout=view.findViewById(R.id.salesShow);
 
         lineChart = view.findViewById(R.id.lineChart);
+        lineChart2 = view.findViewById(R.id.lineChart2);
         disableButtons();
         getShopName();
 
@@ -115,17 +116,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        orderLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (orderShowLayout.getVisibility() == View.VISIBLE) {
-                    orderShowLayout.setVisibility(View.GONE);
-                } else {
-                    orderShowLayout.setVisibility(View.VISIBLE);
-
-                }
-            }
-        });
 
         salesLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -474,6 +464,7 @@ public class HomeFragment extends Fragment {
                         totalSalesAmount += order.getTotalPrice();
                     }
                 }
+
                 totalSales.setText("\u20B9" + " " + String.format("%.2f", totalSalesAmount));
             }
 
@@ -526,11 +517,101 @@ public class HomeFragment extends Fragment {
                 // Handle error
             }
         });
+        DatabaseReference salesRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+        salesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                double[] monthlySales = new double[12]; // Array to store monthly sales
+                ArrayList<String> labels = new ArrayList<>(); // to store x-axis labels
+                int index = 0;
+
+                // Initialize monthly sales array to 0
+                Arrays.fill(monthlySales, 0);
+
+                // Iterate through orders and accumulate total sales for each month
+                for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                    OrderList order = orderSnapshot.getValue(OrderList.class);
+                    if (order != null) {
+                        // Parse the string date to a Date object
+                        Date date = parseDate(order.getDate());
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(date);
+                        int month = cal.get(Calendar.MONTH); // Get month index (0-11)
+                        double salesAmount = order.getTotalPrice();
+                        monthlySales[month] += salesAmount; // Add sales to corresponding month
+                    }
+                }
+
+                // Add month labels (Jan, Feb, ..., Dec) to the chart
+                String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+                labels.addAll(Arrays.asList(monthNames));
+
+                // Setup line chart
+                setupLineChart2(monthlySales, labels);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving total sales: " + databaseError.getMessage());
+            }
+        });
+
     }
 
+    private void setupLineChart2(double[] monthlySales, ArrayList<String> labels) {
+        ArrayList<Entry> dataVals = new ArrayList<>();
+        for (int i = 0; i < monthlySales.length; i++) {
+            dataVals.add(new Entry(i, (float) monthlySales[i]));
+        }
+
+        LineDataSet lineDataSet = new LineDataSet(dataVals, "Monthly Sales");
+        LineData data = new LineData(lineDataSet);
+        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        lineDataSet.setDrawCircles(false);
+        lineDataSet.setLineWidth(5f); // Set line width
+
+        lineChart2.setData(data);
+
+        // Customize x-axis labels
+        XAxis xAxis = lineChart2.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labels)); // Set custom value formatter for x-axis
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
+        xAxis.setDrawGridLines(false); // Hide grid lines
+        xAxis.setGranularity(1f); // Set granularity to display all months
+        xAxis.setLabelCount(labels.size()); // Set label count to display all months
+        xAxis.setLabelRotationAngle(-45); // Rotate labels to avoid overlap
+
+        // Hide y-axis labels and grid lines
+        YAxis yAxis = lineChart2.getAxisLeft();
+        yAxis.setDrawLabels(false);
+        yAxis.setDrawGridLines(false);
+
+        // Hide right y-axis
+        YAxis rightYAxis = lineChart2.getAxisRight();
+        rightYAxis.setEnabled(false);
+
+        lineChart2.getDescription().setEnabled(false); // Hide description
+
+        lineChart2.invalidate(); // Refresh chart
+    }
+
+
+    private Date parseDate(String dateString) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy", Locale.getDefault());
+            return sdf.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private void setupLineChart(ArrayList<Entry> dataVals, ArrayList<String> labels) {
         LineDataSet lineDataSet = new LineDataSet(dataVals, "Visitor Counts");
         LineData data = new LineData(lineDataSet);
+        lineDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        lineDataSet.setDrawCircles(false);
+        lineDataSet.setLineWidth(5f); // Set line width
+
         lineChart.setData(data);
 
         // Hide y-axis labels
@@ -541,7 +622,9 @@ public class HomeFragment extends Fragment {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labels)); // Set custom value formatter for x-axis
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
-
+        yAxis.setDrawGridLines(false); // Show horizontal grid lines
+        yAxis.setGridColor(Color.GRAY); // Set grid line color
+        yAxis.setGranularity(5f);
         lineChart.invalidate();
     }
     private void updateVisitorCount(String date) {
