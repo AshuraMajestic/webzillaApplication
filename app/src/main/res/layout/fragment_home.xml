@@ -389,10 +389,10 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
                             <LinearLayout
+                                android:id="@+id/orderLayout"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:id="@+id/orderLayout"
                                 android:layout_marginTop="12dp"
                                 android:layout_marginStart="16dp"
                                 android:orientation="horizontal">
@@ -404,10 +404,9 @@
                                     android:orientation="vertical">
 
                                     <TextView
-                                        android:id="@+id/textView31"
+                                        android:id="@+id/totalSalesText"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:textColor="@color/black"
                                         android:text="Total Orders" />
 
                                     <LinearLayout
@@ -415,22 +414,43 @@
                                         android:layout_height="match_parent"
                                         android:orientation="horizontal">
 
+
                                         <TextView
-                                            android:id="@+id/totalOrder"
+                                            android:id="@+id/TotalOrders"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:textSize="18sp"
                                             android:textColor="@color/black"
+                                            android:textSize="18sp"
                                             android:textStyle="bold"
+                                            android:layout_marginStart="8dp"
                                             android:text="00" />
 
                                     </LinearLayout>
 
                                 </LinearLayout>
 
+                                <ImageView
+                                    android:id="@+id/orderArrow"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginEnd="24dp"
+                                    android:src="@drawable/down_arow" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/orderShow"
+                                android:layout_width="match_parent"
+                                android:layout_height="300dp"
+                                android:layout_weight="1"
+                                android:visibility="gone"
+                                android:orientation="vertical">
+
+                                <com.github.mikephil.charting.charts.BarChart
+                                    android:id="@+id/lineChart3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent" />
 
                             </LinearLayout>
-
                         </LinearLayout>
 
                     </LinearLayout>

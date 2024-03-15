@@ -20,6 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.ashishappv2.Domains.Add_Product;
 import com.example.ashishappv2.Fragment.ManageFragment;
 import com.example.ashishappv2.Fragment.HomeFragment;
 import com.example.ashishappv2.Fragment.OrderFragment;
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         imageLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getApplicationContext(),AddPhoto.class);
+                Intent intent=new Intent(getApplicationContext(), Add_Product.class);
                 startActivity(intent);
                 finish();
                 dialog.dismiss();

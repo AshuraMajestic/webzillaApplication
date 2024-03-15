@@ -1,27 +1,76 @@
 package com.example.ashishappv2.Domains;
 
+import java.util.List;
 import java.util.Map;
 
 public class ProductInventory {
+
     private String name;
     private String category;
     private String price;
-    private String pieces;
-    private String userEmail;
+    private String DiscountedPrice;
+    private String unit;
+    private String per;
+
     private boolean available;
     private Map<String, String> images;
+    private List<Sizes> sizes;
+    private List<String> color;
 
 
     public ProductInventory(){};
 
-    public ProductInventory(String name, String category, String price, String pieces, String userEmail, boolean available, Map<String, String> images) {
+    public ProductInventory(String name, String category, String price, String discountedPrice, String unit, String per, boolean available, Map<String, String> images, List<Sizes> sizes, List<String> color) {
         this.name = name;
         this.category = category;
         this.price = price;
-        this.pieces = pieces;
-        this.userEmail = userEmail;
+        DiscountedPrice = discountedPrice;
+        this.unit = unit;
+        this.per = per;
         this.available = available;
         this.images = images;
+        this.sizes = sizes;
+        this.color = color;
+    }
+
+    public String getDiscountedPrice() {
+        return DiscountedPrice;
+    }
+
+    public void setDiscountedPrice(String discountedPrice) {
+        DiscountedPrice = discountedPrice;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getPer() {
+        return per;
+    }
+
+    public void setPer(String per) {
+        this.per = per;
+    }
+
+    public List<String> getColor() {
+        return color;
+    }
+
+    public void setColor(List<String> color) {
+        this.color = color;
+    }
+
+    public List<Sizes> getSizes() {
+        return sizes;
+    }
+
+    public void setSizes(List<Sizes> sizes) {
+        this.sizes = sizes;
     }
 
     public String getName() {
@@ -48,22 +97,6 @@ public class ProductInventory {
         this.price = price;
     }
 
-    public String getPieces() {
-        return pieces;
-    }
-
-    public void setPieces(String pieces) {
-        this.pieces = pieces;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
     public boolean isAvailable() {
         return available;
     }
@@ -78,5 +111,41 @@ public class ProductInventory {
 
     public void setImages(Map<String, String> images) {
         this.images = images;
+    }
+}
+class Sizes{
+    private String size;
+    private long price;
+    private long SellingPrice;
+    public Sizes(){};
+
+    public Sizes(String size, long price, long sellingPrice) {
+        this.size = size;
+        this.price = price;
+        SellingPrice = sellingPrice;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public long getSellingPrice() {
+        return SellingPrice;
+    }
+
+    public void setSellingPrice(long sellingPrice) {
+        SellingPrice = sellingPrice;
     }
 }

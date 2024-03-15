@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -16,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.ashishappv2.Activity.AddPhoto;
+import com.example.ashishappv2.Domains.Add_Product;
 import com.example.ashishappv2.Adapter.ProductAdapter;
 import com.example.ashishappv2.Domains.ProductInventory;
 import com.example.ashishappv2.R;
@@ -77,7 +76,7 @@ public class MyproductsFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(getContext(), AddPhoto.class);
+                Intent intent=new Intent(getContext(), Add_Product.class);
                 startActivity(intent);
             }
         });

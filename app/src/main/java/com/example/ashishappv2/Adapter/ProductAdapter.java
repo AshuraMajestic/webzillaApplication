@@ -39,7 +39,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         ProductInventory item = itemList.get(position);
 
         holder.productName.setText(item.getName());
-        holder.piece.setText(item.getPieces() + " pieces");
+        holder.piece.setText(item.getUnit() + " pieces");
         holder.price.setText("₹" + item.getPrice());
         holder.mySwitch.setChecked(item.isAvailable());
 

@@ -15,5 +15,6 @@
     <color name="paymentbg">#FCEADC</color>
     <color name="payment">#DC7025</color>
     <color name="btn_color">#ED731E</color>
+    <color name="hintColor">#C3B6B5</color>
 
 </resources>

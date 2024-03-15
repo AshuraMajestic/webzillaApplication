@@ -18,6 +18,12 @@
         android:theme="@style/Theme.AshishAppV2"
         tools:targetApi="31">
         <activity
+            android:name=".Domains.AddVariants"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.Add_Category"
+            android:exported="false" />
+        <activity
             android:name=".Activity.DukanDeliveryActivity"
             android:exported="false" />
         <activity
@@ -36,7 +42,7 @@
             android:name=".Activity.AddLogo"
             android:exported="false" />
         <activity
-            android:name=".Activity.AddPhoto"
+            android:name=".Domains.Add_Product"
             android:exported="false" />
         <activity
             android:name=".Activity.MainActivity"

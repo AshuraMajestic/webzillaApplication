@@ -69,14 +69,14 @@ public class HomeFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private LinearLayout sessionLayout,salesLayout,orderLayout;
-    private LinearLayout salesShowLayout,SessionshowLayout;
+    private LinearLayout salesShowLayout,SessionshowLayout,orderShowLayout;
     private FirebaseDatabase database;
     private String ShopName;
 
     private TextView shopname, shopLink, siteVisitCount, totalSales, totalOrder;
 
     private AppCompatButton allTime, Last30, Last7, today;
-    BarChart barChart,barChart2;
+    BarChart barChart,barChart2,barChart3;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -102,15 +102,18 @@ public class HomeFragment extends Fragment {
         shopLink = view.findViewById(R.id.link);
         siteVisitCount = view.findViewById(R.id.SiteSession);
         totalSales = view.findViewById(R.id.TotalSales);
-        totalOrder = view.findViewById(R.id.totalOrder);
+        totalOrder = view.findViewById(R.id.TotalOrders);
         salesLayout=view.findViewById(R.id.salesLayout);
         orderLayout=view.findViewById(R.id.orderLayout);
 
+
         SessionshowLayout=view.findViewById(R.id.siteShow);
         salesShowLayout=view.findViewById(R.id.salesShow);
+        orderShowLayout=view.findViewById(R.id.orderShow);
 
         barChart = view.findViewById(R.id.lineChart);
         barChart2 = view.findViewById(R.id.lineChart2);
+        barChart3 = view.findViewById(R.id.lineChart3);
         disableButtons();
         getShopName();
         sessionLayout.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +123,18 @@ public class HomeFragment extends Fragment {
                     SessionshowLayout.setVisibility(View.GONE);
                 } else {
                     SessionshowLayout.setVisibility(View.VISIBLE);
+
+
+                }
+            }
+        });
+        orderLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (orderShowLayout.getVisibility() == View.VISIBLE) {
+                    orderShowLayout.setVisibility(View.GONE);
+                } else {
+                    orderShowLayout.setVisibility(View.VISIBLE);
 
 
                 }
@@ -269,86 +284,15 @@ public class HomeFragment extends Fragment {
                 makeLog("Error retrieving orders: " + databaseError.getMessage());
             }
         });
-
-        setTodaySessionGraph();
-        setTodaySalesGraph();
-
+        
         enableButtons();
-    }
-    private void setTodaySessionGraph() {
-        // Create a BarChart instance for session counts
-        barChart.getDescription().setEnabled(false); // Disable chart description
+        salesShowLayout.setVisibility(View.GONE);
+        SessionshowLayout.setVisibility(View.GONE);
+        orderShowLayout.setVisibility(View.GONE);
+        sessionLayout.setEnabled(false);
+        salesLayout.setEnabled(false);
+        orderLayout.setEnabled(false);
 
-        // Get today's date
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE", Locale.US);
-        String todayDay = dateFormat.format(currentDate);
-
-        // Create BarEntry list for session counts
-        ArrayList<BarEntry> sessionEntries = new ArrayList<>();
-        // Populate the sessionEntries with data for today (you may already have this data)
-        sessionEntries.add(new BarEntry(0, 100)); // Example data for today
-        sessionEntries.add(new BarEntry(1, 150)); // Example data for tomorrow
-
-        // Create BarDataSet for session data
-        BarDataSet sessionDataSet = new BarDataSet(sessionEntries, "Session Counts");
-        sessionDataSet.setColor(Color.BLUE);
-
-        // Create BarData and set it to the chart
-        BarData sessionData = new BarData(sessionDataSet);
-        barChart.setData(sessionData);
-
-        // Customize X-axis labels
-        XAxis xAxis = barChart.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(new String[]{todayDay, "Tomorrow"})); // Set labels for today and tomorrow
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
-        xAxis.setCenterAxisLabels(false);
-        xAxis.setAxisMinimum(0f);
-        xAxis.setAxisMaximum(1f);
-        xAxis.setLabelCount(2); // Number of labels to show
-
-        // Refresh the chart
-        barChart.invalidate();
-    }
-
-    private void setTodaySalesGraph() {
-        // Create a BarChart instance for sales amounts
-        barChart2.getDescription().setEnabled(false); // Disable chart description
-
-        // Get today's date
-        Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE", Locale.US);
-        String todayDay = dateFormat.format(currentDate);
-
-        // Create BarEntry list for sales amounts
-        ArrayList<BarEntry> salesEntries = new ArrayList<>();
-        // Populate the salesEntries with data for today (you may already have this data)
-        salesEntries.add(new BarEntry(0, 500)); // Example data for today
-        salesEntries.add(new BarEntry(1, 700)); // Example data for tomorrow
-
-        // Create BarDataSet for sales data
-        BarDataSet salesDataSet = new BarDataSet(salesEntries, "Sales Amounts");
-        salesDataSet.setColor(Color.GREEN);
-
-        // Create BarData and set it to the chart
-        BarData salesData = new BarData(salesDataSet);
-        barChart2.setData(salesData);
-
-        // Customize X-axis labels
-        XAxis xAxis = barChart2.getXAxis();
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(new String[]{todayDay, "Tomorrow"})); // Set labels for today and tomorrow
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
-        xAxis.setCenterAxisLabels(false);
-        xAxis.setAxisMinimum(0f);
-        xAxis.setAxisMaximum(1f);
-        xAxis.setLabelCount(2); // Number of labels to show
-
-        // Refresh the chart
-        barChart2.invalidate();
     }
 
     private void setLast7days() {
@@ -361,20 +305,21 @@ public class HomeFragment extends Fragment {
         Last7.setTextColor(Color.BLACK);
         today.setBackgroundResource(R.drawable.background_last_normal);
         today.setTextColor(Color.GRAY);
-// Get the current date
+
+        // Get the current date
         Calendar calendar = Calendar.getInstance();
         Date endDate = calendar.getTime(); // Current date
 
-// Subtract 7 days from the current date
+        // Subtract 7 days from the current date
         calendar.add(Calendar.DAY_OF_MONTH, -7);
         Date startDate = calendar.getTime();
 
-// Convert the dates to the format used in the database
+        // Convert the dates to the format used in the database
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
         String startDateString = dateFormat.format(startDate);
         String endDateString = dateFormat.format(endDate);
 
-// Query the database for visitor counts within the last 7 days
+        // Query the database for visitor counts within the last 7 days
         DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName);
         visitorRef.orderByKey().startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -396,7 +341,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-// Query the database for orders within the last 7 days
+        // Query the database for orders within the last 7 days
         DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
         orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -420,10 +365,105 @@ public class HomeFragment extends Fragment {
                 makeLog("Error retrieving orders: " + databaseError.getMessage());
             }
         });
+
         setLast7DaysSalesGraph();
         setLast7DaysSession();
+        setLast7DaysTotalOrdersGraph();
         enableButtons();
     }
+
+    private void setLast7DaysTotalOrdersGraph() {
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // Current date
+
+        // Subtract 7 days from the current date
+        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        Date startDate = calendar.getTime();
+
+        // Convert the dates to the format used in the database
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+        String startDateString = dateFormat.format(startDate);
+        String endDateString = dateFormat.format(endDate);
+
+        // Initialize TreeMap to store total orders for each day
+        TreeMap<String, Integer> totalOrdersMap = new TreeMap<>();
+
+        // Loop through each day within the last 7 days
+        while (!startDate.after(endDate)) {
+            String dateString = dateFormat.format(startDate);
+            totalOrdersMap.put(dateString, 0); // Initialize count to zero for each day
+            calendar.add(Calendar.DAY_OF_MONTH, 1); // Move to the next day
+            startDate = calendar.getTime();
+        }
+
+        // Query orders within the last 7 days
+        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+        Query orderQuery = orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString);
+        orderQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Iterate through orders and aggregate total orders by date
+                for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                    OrderList order = orderSnapshot.getValue(OrderList.class);
+                    if (order != null) {
+                        String dateString = order.getDate(); // Assuming the order object has a date field
+
+                        // Update the totalOrdersMap with total orders for the respective date
+                        if (totalOrdersMap.containsKey(dateString)) {
+                            totalOrdersMap.put(dateString, totalOrdersMap.get(dateString) + 1);
+                        }
+                    }
+                }
+
+                // Prepare data for chart
+                ArrayList<BarEntry> dataVals = new ArrayList<>();
+
+                // Initialize ArrayList to store x-axis labels (dates)
+                ArrayList<String> xLabels = new ArrayList<>(totalOrdersMap.keySet());
+
+                // Iterate through TreeMap to populate dataVals
+                int i = 0;
+                for (Map.Entry<String, Integer> entry : totalOrdersMap.entrySet()) {
+                    int totalOrders = entry.getValue();
+                    // Add entry to dataVals
+                    dataVals.add(new BarEntry(i++, totalOrders));
+                }
+
+                // Create BarDataSet and BarData
+                BarDataSet barDataSet = new BarDataSet(dataVals, "Total Orders");
+                BarData data = new BarData(barDataSet);
+
+                // Set data to the chart
+                barChart3.setData(data);
+
+                // Customize x-axis labels
+                XAxis xAxis = barChart3.getXAxis();
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels)); // Set custom value formatter for x-axis
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
+                xAxis.setLabelRotationAngle(45);
+
+                // Customize y-axis labels (optional)
+                YAxis yAxis = barChart3.getAxisLeft();
+                yAxis.setValueFormatter(new DefaultAxisValueFormatter(0)); // Set y-axis to display integer values
+
+                // Hide right y-axis
+                YAxis rightYAxis = barChart3.getAxisRight();
+                rightYAxis.setEnabled(false);
+
+                barChart3.getDescription().setEnabled(false); // Hide description
+
+                barChart3.invalidate(); // Refresh chart
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving orders: " + databaseError.getMessage());
+            }
+        });
+    }
+
+
     private void setLast7DaysSession() {
         Calendar calendar = Calendar.getInstance();
         Date endDate = calendar.getTime(); // Current date
@@ -673,7 +713,85 @@ public class HomeFragment extends Fragment {
         });
         set30DaysSessionGraph();
         set30DaysSalesGraph();
+        set30DaysTotalOrdersGraph();
         enableButtons();
+    }
+    private void set30DaysTotalOrdersGraph() {
+        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // Current date
+
+        // Subtract 30 days from the current date
+        calendar.add(Calendar.DAY_OF_MONTH, -29);
+        Date startDate = calendar.getTime();
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+        String startDateString = dateFormat.format(startDate);
+        String endDateString = dateFormat.format(endDate);
+
+        // Query orders within the date range
+        Query orderQuery = orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString);
+        orderQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                TreeMap<String, Integer> totalOrdersMap = new TreeMap<>();
+
+                // Iterate through orders and aggregate total orders by date
+                for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                    OrderList order = orderSnapshot.getValue(OrderList.class);
+                    if (order != null) {
+                        String dateString = order.getDate(); // Assuming the order object has a date field
+
+                        // Update the totalOrdersMap with total orders for the respective date
+                        totalOrdersMap.put(dateString, totalOrdersMap.getOrDefault(dateString, 0) + 1);
+                    }
+                }
+
+                // Prepare data for chart
+                ArrayList<BarEntry> dataVals = new ArrayList<>();
+                ArrayList<String> xLabels = new ArrayList<>(totalOrdersMap.keySet()); // to store x-axis labels
+
+                // Iterate through TreeMap to populate dataVals
+                int i = 0;
+                for (Map.Entry<String, Integer> entry : totalOrdersMap.entrySet()) {
+                    int totalOrders = entry.getValue();
+                    // Add entry to dataVals
+                    dataVals.add(new BarEntry(i++, totalOrders));
+                }
+
+                // Create BarDataSet and BarData
+                BarDataSet barDataSet = new BarDataSet(dataVals, "Total Orders");
+                BarData data = new BarData(barDataSet);
+
+                // Set data to the chart
+                barChart3.setData(data);
+
+                // Customize x-axis labels
+                XAxis xAxis = barChart3.getXAxis();
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels)); // Set custom value formatter for x-axis
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
+                xAxis.setLabelRotationAngle(45);
+
+                // Customize y-axis labels (optional)
+                YAxis yAxis = barChart3.getAxisLeft();
+                yAxis.setValueFormatter(new DefaultAxisValueFormatter(0)); // Set y-axis to display integer values
+
+                // Hide right y-axis
+                YAxis rightYAxis = barChart3.getAxisRight();
+                rightYAxis.setEnabled(false);
+
+                barChart3.getDescription().setEnabled(false); // Hide description
+
+                barChart3.invalidate(); // Refresh chart
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving orders: " + databaseError.getMessage());
+            }
+        });
     }
 
     private void set30DaysSalesGraph() {
@@ -886,6 +1004,7 @@ public class HomeFragment extends Fragment {
         //graph
         setSiteSessionGraph();
         setSalesGraph();
+        setTotalOrdersGraph();
         enableButtons();
 
     }
@@ -1071,6 +1190,72 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    private void setTotalOrdersGraph() {
+        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+        orderRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                TreeMap<String, Integer> totalOrdersMap = new TreeMap<>(new MonthYearComparator()); // TreeMap to store total orders for each month
+
+                // Iterate through each order and aggregate total orders by month
+                for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                    OrderList order = orderSnapshot.getValue(OrderList.class);
+                    if (order != null) {
+                        String dateString = order.getDate(); // Assuming the order object has a date field
+
+                        // Extract month and year from the date string
+                        String monthYearString = getMonthYearFromDate(dateString);
+
+                        // Add total orders to the map, aggregating if month-year already exists
+                        totalOrdersMap.put(monthYearString, totalOrdersMap.getOrDefault(monthYearString, 0) + 1);
+                    }
+                }
+
+                // Prepare data for chart
+                ArrayList<BarEntry> dataVals = new ArrayList<>();
+                ArrayList<String> xLabels = new ArrayList<>(totalOrdersMap.keySet()); // to store x-axis labels
+
+                // Iterate through TreeMap to populate dataVals
+                int i = 0; // Counter to keep track of x-axis index
+                for (Map.Entry<String, Integer> entry : totalOrdersMap.entrySet()) {
+                    int totalOrders = entry.getValue();
+
+                    // Add entry to dataVals
+                    dataVals.add(new BarEntry(i++, totalOrders));
+                }
+
+                // Create BarDataSet and BarData
+                BarDataSet barDataSet = new BarDataSet(dataVals, "Total Orders");
+                BarData data = new BarData(barDataSet);
+
+                // Set data to the chart
+                barChart3.setData(data);
+
+                // Customize x-axis labels
+                XAxis xAxis = barChart3.getXAxis();
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels)); // Set custom value formatter for x-axis
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
+                xAxis.setLabelRotationAngle(45);
+
+                // Customize y-axis labels (optional)
+                YAxis yAxis = barChart3.getAxisLeft();
+                yAxis.setValueFormatter(new DefaultAxisValueFormatter(0)); // Set y-axis to display integer values
+
+                // Hide right y-axis
+                YAxis rightYAxis = barChart3.getAxisRight();
+                rightYAxis.setEnabled(false);
+
+                barChart3.getDescription().setEnabled(false); // Hide description
+
+                barChart3.invalidate(); // Refresh chart
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving orders: " + databaseError.getMessage());
+            }
+        });
+    }
 
 
     private void gotoUrl(String s) {
@@ -1085,8 +1270,8 @@ public class HomeFragment extends Fragment {
         Last7.setEnabled(true);
         today.setEnabled(true);
         sessionLayout.setEnabled(true);
-        orderLayout.setEnabled(true);
         salesLayout.setEnabled(true);
+        orderLayout.setEnabled(true);
     }
 
     private void disableButtons() {
@@ -1094,10 +1279,10 @@ public class HomeFragment extends Fragment {
         Last30.setEnabled(false);
         Last7.setEnabled(false);
         today.setEnabled(false);
-
         sessionLayout.setEnabled(false);
-        orderLayout.setEnabled(false);
         salesLayout.setEnabled(false);
+        orderLayout.setEnabled(false);
+
     }
     private void makeLog(String s) {
         Log.d("AshuraDB", s);
