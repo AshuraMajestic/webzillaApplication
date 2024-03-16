@@ -50,7 +50,7 @@
             app:boxBackgroundColor="@android:color/transparent">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/priceText"
+                android:id="@+id/priceTextVariant"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/whitish_bg"
@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/whitish_bg"
-            android:hint="Size*"
+            android:hint="Selling Price *"
             android:textColor="@color/black"
             android:textSize="18sp" />
 

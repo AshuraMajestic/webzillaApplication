@@ -48,12 +48,14 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Add_Product extends AppCompatActivity  implements chooseCategoryAdapter.OnCategoryClickListener{
     private ImageView imageView;
     private TextView pricetext,dicounttext,pertext,unittext;
     private Button btn;
     private chooseCategoryAdapter chooseCategoryAdapter;
+    private List<Sizes> sizeListFromVariants = new ArrayList<>();
     private List<CategoryInventory> CategoryList;
 
     private final List<Uri> selectedImageUris = new ArrayList<>();
@@ -90,8 +92,8 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
         variants.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),AddVariants.class);
-                startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), AddVariants.class);
+                startActivityForResult(intent, REQUEST_CODE_ADD_VARIANTS); // Start activity for result
             }
         });
         per.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -614,14 +616,16 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
         DatabaseReference shopRef = database.getReference().child("Shops").child(ShopName);
         DatabaseReference productRef = shopRef.child("Products").child(ProductName);
 
+        int totalUploads = selectedImageUris.size();
+        AtomicInteger uploadsComplete = new AtomicInteger(0);
+
         // Upload images to Firebase Storage
-        for (int i = 0; i < selectedImageUris.size(); i++) {
+        for (int i = 0; i < totalUploads; i++) {
             Uri imageUri = selectedImageUris.get(i);
             String imageName = "image_" + i + ".jpg";
             StorageReference imageRef = storageReference.child(ShopName).child("Products").child(ProductName).child(imageName);
-
+            int finalI=i;
             // Upload image to Firebase Storage
-            int finalI = i;
             imageRef.putFile(imageUri).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     // Get the download URL of the uploaded image
@@ -629,11 +633,27 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
                         if (uriTask.isSuccessful()) {
                             // Save the image URL to the database
                             productRef.child("images").child("image_" + finalI).setValue(uriTask.getResult().toString());
+
+                            // Increment the counter for successful uploads
+                            int count = uploadsComplete.incrementAndGet();
+
+                            // Check if all uploads are complete
+                            if (count == totalUploads) {
+                                // All uploads are complete, proceed to save other product details
+                                saveOtherProductDetails(productRef,shopRef);
+                            }
                         }
                     });
                 }
             });
         }
+
+        Intent intent = new Intent(Add_Product.this, InventoryActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void saveOtherProductDetails(DatabaseReference productRef,DatabaseReference shopRef) {
 
         // Save other product details to the database
         productRef.child("name").setValue(productName.getText().toString());
@@ -650,7 +670,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
         productRef.child("per").setValue(per.getText().toString());
         boolean b=true;
         productRef.child("available").setValue(b);
-        productRef.child("sizes").setValue(null);
+        productRef.child("sizes").setValue(sizeListFromVariants);
         productRef.child("color").setValue(null);
         DatabaseReference categoryRef=shopRef.child("Category").child(categoryName.getText().toString().toLowerCase());
         categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -664,32 +684,15 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle potential errors
+                makeLog(databaseError+"");
             }
         });
         showToast("Product added successfully");
 
+    }
 
-        DatabaseReference CategoryRef = database.getReference().child("Shops").child(ShopName).child("Category").child(categoryName.getText().toString().trim().toLowerCase());
-        CategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                CategoryRef.child("products").push().setValue(productName);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle potential errors
-            }
-        });
-
-
-
-        Intent intent = new Intent(Add_Product.this, InventoryActivity.class);
-        startActivity(intent);
-        finish();
+    private void makeLog(String s) {
+        Log.d("AshuraDB",s);
     }
 
 
@@ -715,8 +718,15 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
                     selectedImageUris.add(selectedImageUri);
                 }
             }
-
+            // Update image views
             updateImageViews();
+        }else if (requestCode == REQUEST_CODE_ADD_VARIANTS && resultCode == RESULT_OK && data != null) {
+            ArrayList<Sizes> sizesList = data.getParcelableArrayListExtra("sizeList");
+            if (sizesList != null) {
+                sizeListFromVariants = sizesList;
+            }
+        } else if (requestCode == REQUEST_CODE_ADD_VARIANTS && resultCode == RESULT_CANCELED) {
+            makeLog(resultCode+"");
         }
     }
 
@@ -757,4 +767,5 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
     public void onPointerCaptureChanged(boolean hasCapture) {
         super.onPointerCaptureChanged(hasCapture);
     }
+    private static final int REQUEST_CODE_ADD_VARIANTS = 1001;
 }

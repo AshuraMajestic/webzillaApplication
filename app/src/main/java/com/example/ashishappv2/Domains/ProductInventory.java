@@ -1,5 +1,8 @@
 package com.example.ashishappv2.Domains;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 import java.util.Map;
 
@@ -113,17 +116,36 @@ public class ProductInventory {
         this.images = images;
     }
 }
-class Sizes{
+class Sizes implements Parcelable {
     private String size;
     private long price;
-    private long SellingPrice;
-    public Sizes(){};
+    private long sellingPrice;
+
+    public Sizes() {}
 
     public Sizes(String size, long price, long sellingPrice) {
         this.size = size;
         this.price = price;
-        SellingPrice = sellingPrice;
+        this.sellingPrice = sellingPrice;
     }
+
+    protected Sizes(Parcel in) {
+        size = in.readString();
+        price = in.readLong();
+        sellingPrice = in.readLong();
+    }
+
+    public static final Creator<Sizes> CREATOR = new Creator<Sizes>() {
+        @Override
+        public Sizes createFromParcel(Parcel in) {
+            return new Sizes(in);
+        }
+
+        @Override
+        public Sizes[] newArray(int size) {
+            return new Sizes[size];
+        }
+    };
 
     public String getSize() {
         return size;
@@ -142,10 +164,22 @@ class Sizes{
     }
 
     public long getSellingPrice() {
-        return SellingPrice;
+        return sellingPrice;
     }
 
     public void setSellingPrice(long sellingPrice) {
-        SellingPrice = sellingPrice;
+        this.sellingPrice = sellingPrice;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(size);
+        dest.writeLong(price);
+        dest.writeLong(sellingPrice);
     }
 }
