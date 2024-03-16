@@ -16,5 +16,24 @@
     <color name="payment">#DC7025</color>
     <color name="btn_color">#ED731E</color>
     <color name="hintColor">#C3B6B5</color>
+    <color name="orange">#F44235</color>
+    <color name="darkpink">#E91F63</color>
+    <color name="pink">#FF2B94</color>
+    <color name="lightpurple">#9C29B2</color>
+    <color name="darkpurple">#663CB5</color>
+    <color name="indigo">#4152B4</color>
+    <color name="darkblue">#2295F5</color>
+    <color name="lightblue">#02AAF5</color>
+    <color name="cyan">#00BED4</color>
+    <color name="darkgreen">#049689</color>
+    <color name="green2">#4CB051</color>
+    <color name="lightGreen">#8BC349</color>
+    <color name="halkaGreen">#CDDC3C</color>
+    <color name="yellow">#FFEB3C</color>
+    <color name="goldenYellow">#FEC106</color>
+    <color name="darkYellow">#FD9900</color>
+    <color name="brown">#795546</color>
+    <color name="darkgrey">#627D8D</color>
+    <color name="lightgrey">#73706F</color>
 
 </resources>

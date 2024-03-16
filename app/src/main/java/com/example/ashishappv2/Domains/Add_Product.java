@@ -56,6 +56,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
     private Button btn;
     private chooseCategoryAdapter chooseCategoryAdapter;
     private List<Sizes> sizeListFromVariants = new ArrayList<>();
+    private List<String> colorListFromVarinats=new ArrayList<>();
     private List<CategoryInventory> CategoryList;
 
     private final List<Uri> selectedImageUris = new ArrayList<>();
@@ -196,6 +197,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+
             }
 
             @Override
@@ -210,6 +212,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
                 }
             }
         });
+
 
         //Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -607,9 +610,20 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
     }
     private void savetodb() {
 
+
         if (productName.getText().toString().isEmpty() || categoryName.getText().toString().isEmpty() || productPrice.getText().toString().isEmpty() ||  ProductUnit.getText().toString().isEmpty()  ) {
             showToast("Please fill in all the fields");
             return;
+        }
+        if (!discountedPrice.getText().toString().isEmpty() && !productPrice.getText().toString().isEmpty()) {
+            double price = Double.parseDouble(productPrice.getText().toString());
+            double discounted = Double.parseDouble(discountedPrice.getText().toString());
+
+            if (discounted > price) {
+                // Show toast
+                showToast("Discounted price cannot be greater than the actual price");
+                return; // Stop further execution
+            }
         }
         String ProductName = productName.getText().toString().trim().toLowerCase();
         // Create a reference to the product in the database
@@ -671,7 +685,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
         boolean b=true;
         productRef.child("available").setValue(b);
         productRef.child("sizes").setValue(sizeListFromVariants);
-        productRef.child("color").setValue(null);
+        productRef.child("color").setValue(colorListFromVarinats);
         DatabaseReference categoryRef=shopRef.child("Category").child(categoryName.getText().toString().toLowerCase());
         categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -721,11 +735,17 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
             // Update image views
             updateImageViews();
         }else if (requestCode == REQUEST_CODE_ADD_VARIANTS && resultCode == RESULT_OK && data != null) {
+            // Handling for adding variants
             ArrayList<Sizes> sizesList = data.getParcelableArrayListExtra("sizeList");
+            ArrayList<String> colorList = data.getStringArrayListExtra("colorList");
             if (sizesList != null) {
                 sizeListFromVariants = sizesList;
             }
+            if (colorList != null) {
+                colorListFromVarinats=colorList;
+            }
         } else if (requestCode == REQUEST_CODE_ADD_VARIANTS && resultCode == RESULT_CANCELED) {
+            // Handling for canceled result
             makeLog(resultCode+"");
         }
     }
