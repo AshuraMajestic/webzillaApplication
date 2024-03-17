@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/whitish_bg"
-                android:hint="Size*"
+                android:hint="@string/Size"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/whitish_bg"
-                android:hint="Price *"
+                android:hint="@string/price"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/whitish_bg"
-            android:hint="Selling Price *"
+            android:hint="@string/sellingPrice"
             android:textColor="@color/black"
             android:textSize="18sp" />
 

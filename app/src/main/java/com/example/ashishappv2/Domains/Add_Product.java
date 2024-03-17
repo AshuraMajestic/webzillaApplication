@@ -52,7 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Add_Product extends AppCompatActivity  implements chooseCategoryAdapter.OnCategoryClickListener{
     private ImageView imageView;
-    private TextView pricetext,dicounttext,pertext,unittext;
+    private TextView pricetext,dicounttext,pertext,unittext,discountPercent;
     private Button btn;
     private chooseCategoryAdapter chooseCategoryAdapter;
     private List<Sizes> sizeListFromVariants = new ArrayList<>();
@@ -88,6 +88,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
         dicounttext=findViewById(R.id.discounttext);
         pertext=findViewById(R.id.pertext);
         unittext=findViewById(R.id.unit);
+        discountPercent=findViewById(R.id.discountPercent);
 
 
         variants.setOnClickListener(new View.OnClickListener() {
@@ -171,25 +172,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
                 }
             }
         });
-        ProductUnit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String priceText = s.toString();
-                if (!priceText.isEmpty()) {
-                    pertext.setText(priceText);
-                } else {
-                    pricetext.setText(" "); // Reset the text if the price is empty
-                }
-            }
-        });
         discountedPrice.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -202,14 +185,30 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
 
             @Override
             public void afterTextChanged(Editable s) {
-                String PriceText = s.toString();
+                String PriceText = s.toString(); // Variable names should start with lowercase
                 if (!PriceText.isEmpty()) {
-                    dicounttext.setText("₹" + PriceText);
-                    setStrikeThroughText(pricetext, productPrice.getText().toString());
+                    try {
+                        int priceValue = Integer.parseInt(PriceText);
+                        if(priceValue > Integer.parseInt(productPrice.getText().toString())){
+                            showToast("Discount cannot be higher than Orignal Price");
+                            discountPercent.setVisibility(View.GONE);
+                        }else{
+                            float productPriceValue = Float.parseFloat(productPrice.getText().toString());
+                            float discountPercentage = (priceValue / productPriceValue) * 100;
+                            discountPercent.setText(String.format("%.2f %%", discountPercentage));
+                            discountPercent.setVisibility(View.VISIBLE);
+                            dicounttext.setText("₹" + PriceText);
+                            setStrikeThroughText(pricetext, productPrice.getText().toString());
+                        }
+
+                    } catch (NumberFormatException e) {
+                        showToast("Enter discount in number format");
+                    }
                 } else {
                     dicounttext.setText(""); // Reset the text if the price is empty
                     pricetext.setText("₹" + productPrice.getText().toString()); // Set pricetext to the original price
                 }
+
             }
         });
 

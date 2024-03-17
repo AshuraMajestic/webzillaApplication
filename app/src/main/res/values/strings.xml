@@ -18,10 +18,12 @@
     <string name="Addimage">add Image</string>
     <string name="Addproduct">Add Product</string>
     <string name="upto">Up to 5 photos</string>
-    <string name="productname">Product Name</string>
-    <string name="productcategory">Product Caegory</string>
-    <string name="price">Price</string>
-    <string name="per">Pieces</string>
+    <string name="productname">Product Name <font color="red">*</font></string>
+    <string name="productcategory">Product Category <font color="red">*</font></string>
+    <string name="price">Price <font color="red">*</font></string>
+    <string name="discountPrice">Discounted Price <font color="red">*</font></string>
+    <string name="unit">Product Unit <font color="red">*</font></string>
+    <string name="per">Pieces <font color="red">*</font></string>
     <string name="mange">Manage</string>
     <string name="api">Please enter your Shiprocket API user details. You can find it on <u><font color="blue">API configuration page</font></u></string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -81,8 +83,10 @@
     <string name="pin">Pin Code <font color="red">*</font></string>
     <string name="City">City <font color="red">*</font></string>
     <string name="state">State <font color="red">*</font></string>
-    <string name="GST">GST Number</string>
+    <string name="GST">GST Number </string>
     <string name="Site">SiteCount</string>
+    <string name="Size">Size <font color="red">*</font></string>
+    <string name="sellingPrice">Selling Price <font color="red">*</font></string>
 
 
 </resources>
