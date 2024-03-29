@@ -7,315 +7,88 @@
     android:backgroundTint="@color/white"
     tools:context=".Fragment.ProfileFragment">
 
-    <View
-        android:id="@+id/view2"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/green"
-        android:layout_gravity="top" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Account"
-        android:textColor="#FAF6F6"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginTop="8dp"
-        android:layout_gravity="center_horizontal" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="@color/white">
-
-        <ImageView
-            android:id="@+id/showLogo"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_myplaces" />
-
-        <TextView
-            android:id="@+id/ShopName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Shop Name"
-            android:textColor="@color/black"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/showLogo"
-            app:layout_constraintStart_toStartOf="@+id/showLogo"
-            app:layout_constraintTop_toBottomOf="@+id/showLogo" />
-
-        <TextView
-            android:id="@+id/EditBusiness"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/Edit"
-            android:textColor="@android:color/holo_blue_dark"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ShopName" />
-
-        <ScrollView
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/EditBusiness">
+            android:layout_height="50dp"
+            android:background="@color/green"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Account"
+                android:textColor="#FAF6F6"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                />
+        </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/shopLogo"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:elevation="2dp"
+                    android:src="@drawable/payement" />
 
                 <LinearLayout
-                    android:id="@+id/accountDetails"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="48dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="16dp"
-                        android:src="@drawable/person"
-                        app:tint="@color/grey" />
-
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical">
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:paddingStart="24dp"
-                        android:text="Account Details"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="24dp"
-                        android:rotation="180"
-                        app:srcCompat="@drawable/back"
-                        app:tint="@color/grey" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/StoreSettings"
-                    android:layout_width="0dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/accountDetails">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="16dp"
-                        android:outlineAmbientShadowColor="@color/black"
-                        android:outlineSpotShadowColor="@color/black"
-                        app:srcCompat="@android:drawable/ic_menu_manage"
-                        app:tint="@color/grey" />
-
-                    <TextView
+                        android:id="@+id/shopName"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:paddingStart="24dp"
-                        android:text="Store Setting"
-                        android:textColor="@color/black"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="24dp"
-                        android:rotation="180"
-                        app:srcCompat="@drawable/back"
-                        app:tint="@color/grey" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/yourown"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="24dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/StoreSettings">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="16dp"
-                        android:outlineAmbientShadowColor="@color/black"
-                        android:outlineSpotShadowColor="@color/black"
-                        app:srcCompat="@drawable/common_full_open_on_phone"
-                        app:tint="@color/grey" />
+                        android:gravity="bottom"
+                        android:textColor="@color/black"
+                        android:text="ashuramajestic" />
 
                     <TextView
+                        android:id="@+id/userName"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:paddingStart="24dp"
-                        android:text="Get your Own App"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="24dp"
-                        android:rotation="180"
-                        app:srcCompat="@drawable/back"
-                        app:tint="@color/grey" />
+                        android:textColor="@color/green"
+                        android:textSize="16sp"
+                        android:text="ashura" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/pc"
-                    android:layout_width="0dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/yourown">
+                <ImageButton
+                    android:id="@+id/imageButton2"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@color/transparent"
+                    android:rotation="180"
+                    android:src="@drawable/back" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="16dp"
-                        android:outlineAmbientShadowColor="@color/black"
-                        android:outlineSpotShadowColor="@color/black"
-                        app:srcCompat="@android:drawable/ic_menu_mapmode"
-                        app:tint="@color/grey" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:paddingStart="24dp"
-                        android:text="For Your Pc"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="24dp"
-                        android:rotation="180"
-                        app:srcCompat="@drawable/back"
-                        app:tint="@color/grey" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_marginTop="24dp"
-                    android:id="@+id/payment"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/pc">
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="16dp"
-                        android:outlineAmbientShadowColor="@color/black"
-                        android:outlineSpotShadowColor="@color/black"
-                        android:src="@drawable/money"
-                        app:tint="@color/grey" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:paddingStart="24dp"
-                        android:text="Add Payment Method"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="24dp"
-                        android:rotation="180"
-                        app:srcCompat="@drawable/back"
-                        app:tint="@color/grey" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_marginTop="24dp"
-                    android:id="@+id/jagah"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/payment">
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginStart="16dp"
-                        android:outlineAmbientShadowColor="@color/black"
-                        android:outlineSpotShadowColor="@color/black"
-                        app:tint="@color/grey" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:paddingStart="24dp"
-                        android:text="Add Payment Method"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginEnd="24dp"
-                        android:rotation="180"
-                        app:tint="@color/grey" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

@@ -34,8 +34,8 @@ import java.util.Objects;
 public class ProfileFragment extends Fragment {
 
     ImageView logo;
-    TextView shopName,editBusiness;
-    LinearLayout accountDetail,storeSetting,youOwnApp,forPc,Payment;
+    TextView shopName,username;
+    LinearLayout Payment;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -56,14 +56,10 @@ public static ProfileFragment newInstance() {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         //Page Elements
-        logo = view.findViewById(R.id.showLogo);
-        shopName = view.findViewById(R.id.ShopName);
-        editBusiness = view.findViewById(R.id.EditBusiness);
-        accountDetail = view.findViewById(R.id.accountDetails);
-        storeSetting = view.findViewById(R.id.StoreSettings);
-        youOwnApp = view.findViewById(R.id.yourown);
-        forPc = view.findViewById(R.id.pc);
-        Payment = view.findViewById(R.id.payment);
+        logo = view.findViewById(R.id.shopLogo);
+        shopName = view.findViewById(R.id.shopName);
+        username=view.findViewById(R.id.userName);
+//        Payment = view.findViewById(R.id.payment);
 
 
         //Firebase Elements
@@ -80,7 +76,10 @@ public static ProfileFragment newInstance() {
                     if (user != null) {
                         // Get the link dynamically from the user data
                         String link = user.getLink();
-
+                        String shopname=user.getShopname();
+                        String userName= user.getUsername();
+                        shopName.setText(shopname);
+                        username.setText("@"+userName);
                         // Now use the dynamically retrieved link to fetch the logo
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Shops").child(link);
                         StorageReference userLogoRef = storageReference.child("ShopLogo").child("logo.jpg");
@@ -109,25 +108,25 @@ public static ProfileFragment newInstance() {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Payment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Payment.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        try {
-                            Intent intent = new Intent(getContext(), PaymentGateway.class);
-                            if (getContext() != null) {
-                                startActivity(intent);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e("PaymentClick", "Error in onClick: " + e.getMessage());
-                        }
-                    }
-                });
-            }
-        });
+//        Payment.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Payment.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        try {
+//                            Intent intent = new Intent(getContext(), PaymentGateway.class);
+//                            if (getContext() != null) {
+//                                startActivity(intent);
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            Log.e("PaymentClick", "Error in onClick: " + e.getMessage());
+//                        }
+//                    }
+//                });
+//            }
+//        });
     }
 
     private void retrieveShopName() {

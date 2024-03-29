@@ -194,7 +194,7 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
                             discountPercent.setVisibility(View.GONE);
                         }else{
                             float productPriceValue = Float.parseFloat(productPrice.getText().toString());
-                            float discountPercentage = (priceValue / productPriceValue) * 100;
+                            float discountPercentage = ((productPriceValue-priceValue) / productPriceValue) * 100;
                             discountPercent.setText(String.format("%.2f %%", discountPercentage));
                             discountPercent.setVisibility(View.VISIBLE);
                             dicounttext.setText("₹" + PriceText);
@@ -624,11 +624,18 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
                 return; // Stop further execution
             }
         }
+        if(colorListFromVarinats.size()==0 || sizeListFromVariants.size() ==0){
+            showToast("Add minimum one variant of product");
+            return; // Stop further execution
+        }
         String ProductName = productName.getText().toString().trim().toLowerCase();
         // Create a reference to the product in the database
         DatabaseReference shopRef = database.getReference().child("Shops").child(ShopName);
         DatabaseReference productRef = shopRef.child("Products").child(ProductName);
-
+        if(selectedImageUris.size()==0){
+            showToast("Add Images for product");
+            return;
+        }
         int totalUploads = selectedImageUris.size();
         AtomicInteger uploadsComplete = new AtomicInteger(0);
 
@@ -726,6 +733,10 @@ public class Add_Product extends AppCompatActivity  implements chooseCategoryAda
             } else if (data.getClipData() != null) {
                 // Multiple images selected
                 ClipData clipData = data.getClipData();
+                if(clipData.getItemCount()<5) {
+                    showToast("Select 5 Images");
+                    return;
+                }
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     Uri selectedImageUri = clipData.getItemAt(i).getUri();
                     selectedImageUris.add(selectedImageUri);

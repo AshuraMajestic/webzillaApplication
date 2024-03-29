@@ -458,7 +458,6 @@ selectYellow.setOnClickListener(new View.OnClickListener() {
             String colorName = colorNameText.getText().toString();
             ColorList.add(colorName);
         }
-
             sizeList.clear(); // Clear the list to avoid duplicate entries
 
             boolean isValidInput=true;
