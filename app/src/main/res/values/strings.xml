@@ -1,10 +1,9 @@
 <resources>
-    <string name="app_name">AshishAppV2</string>
+    <string name="app_name">WebZilla</string>
     <string name="search">Search</string>
     <string name="home">Home</string>
     <string name="plus">Add</string>
     <string name="profile">Profile</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="now">Register Now</string>
     <string name="User">Username</string>
     <string name="Shop">Shop Name</string>
@@ -87,6 +86,7 @@
     <string name="Site">SiteCount</string>
     <string name="Size">Size <font color="red">*</font></string>
     <string name="sellingPrice">Selling Price <font color="red">*</font></string>
+    <string name="signup">Dont\'t have an account? <font color="#802EEC">Sign up</font></string>
 
 
 </resources>

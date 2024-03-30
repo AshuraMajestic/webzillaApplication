@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.ashishappv2.Activity.MainActivity;
 import com.example.ashishappv2.Activity.PaymentGateway;
 import com.example.ashishappv2.Domains.userData;
 import com.example.ashishappv2.R;
@@ -35,7 +36,7 @@ public class ProfileFragment extends Fragment {
 
     ImageView logo;
     TextView shopName,username;
-    LinearLayout Payment;
+    LinearLayout Payment,security,notification,support,logout;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -59,6 +60,10 @@ public static ProfileFragment newInstance() {
         logo = view.findViewById(R.id.shopLogo);
         shopName = view.findViewById(R.id.shopName);
         username=view.findViewById(R.id.userName);
+        security=view.findViewById(R.id.privacyandSecurityLayout);
+        notification=view.findViewById(R.id.notificationLayout);
+        support=view.findViewById(R.id.supportLayout);
+        logout=view.findViewById(R.id.logoutLayout);
 //        Payment = view.findViewById(R.id.payment);
 
 
@@ -100,6 +105,18 @@ public static ProfileFragment newInstance() {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 makeLog("Error retrieving data: " + databaseError.getMessage());
+            }
+        });
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                // Redirect the user to the login screen or any other desired destination
+                // For example:
+                Intent intent = new Intent(requireContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                requireActivity().finish(); // Close the current activity
             }
         });
         return view;
