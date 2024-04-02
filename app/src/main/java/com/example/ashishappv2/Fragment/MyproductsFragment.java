@@ -29,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyproductsFragment extends Fragment {
+public class MyproductsFragment extends Fragment  implements ProductAdapter.OnSwitchChangeListener{
 
     private RecyclerView recyclerView;
     private AppCompatButton button;
@@ -63,11 +63,34 @@ public class MyproductsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         productList = new ArrayList<>();
-        productAdapter = new ProductAdapter(productList, getContext());
+        productAdapter = new ProductAdapter(productList, getContext(),this);
         recyclerView.setAdapter(productAdapter);
 
         getShopName(); // Initiating the data retrieval
         return view;
+    }
+    @Override
+    public void onSwitchChanged(String productName, boolean isChecked) {
+        DatabaseReference productRef = database.getReference().child("Shops").child(shopName).child("Products");
+
+        productRef.orderByChild("name").equalTo(productName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String productId = snapshot.getKey();
+                        productRef.child(productId).child("available").setValue(isChecked);
+                    }
+                } else {
+                    showToast("Product not found");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("AshuraDB", error.toString());
+            }
+        });
     }
 
     @Override

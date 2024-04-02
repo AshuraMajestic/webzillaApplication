@@ -85,7 +85,7 @@ public class PlusFragment extends Fragment {
                 return;
             }
             else{
-                userData user= new userData(userName,email,password,shopName,addressText,phoneNumber,link);
+                userData user= new userData(userName,email,password,shopName,addressText,phoneNumber,link,false);
                 createAccount(user);
             }
 

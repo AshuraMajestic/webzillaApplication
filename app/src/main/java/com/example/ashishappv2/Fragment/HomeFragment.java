@@ -18,8 +18,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,8 @@ import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.EntryXComparator;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -73,10 +77,12 @@ public class HomeFragment extends Fragment {
     private LinearLayout salesShowLayout,SessionshowLayout,orderShowLayout;
     private FirebaseDatabase database;
     private String ShopName;
+    private Switch online;
 
     private TextView shopname, shopLink, siteVisitCount, totalSales, totalOrder;
 
     private AppCompatButton allTime, Last30, Last7, today;
+    private View view2;
     BarChart barChart,barChart2,barChart3;
 
     public HomeFragment() {
@@ -106,7 +112,8 @@ public class HomeFragment extends Fragment {
         totalOrder = view.findViewById(R.id.TotalOrders);
         salesLayout=view.findViewById(R.id.salesLayout);
         orderLayout=view.findViewById(R.id.orderLayout);
-
+        online=view.findViewById(R.id.online);
+        view2=view.findViewById(R.id.view);
 
         SessionshowLayout=view.findViewById(R.id.siteShow);
         salesShowLayout=view.findViewById(R.id.salesShow);
@@ -168,8 +175,19 @@ public class HomeFragment extends Fragment {
                 if (dataSnapshot.exists()) {
                     ShopName = dataSnapshot.child("link").getValue(String.class).trim().toLowerCase();
                     String shopName=dataSnapshot.child("shopname").getValue(String.class);
+                    boolean isOnline = dataSnapshot.child("online").getValue(Boolean.class);
                     shopname.setText(shopName);
                     shopLink.setText("https://ashishweb-jv5n.onrender.com/" + ShopName);
+                    if (isOnline) {
+                        online.setChecked(true);
+                        online.setText("Online");
+                        view2.setBackgroundResource(R.color.green);
+                    } else {
+                        online.setChecked(false);
+                        online.setText("Offline");
+                        view2.setBackgroundResource(R.color.red);
+                    }
+
                     setAllTime();
                 } else {
                     showToast("User data not found");
@@ -222,8 +240,41 @@ public class HomeFragment extends Fragment {
                 setToday();
             }
         });
+        online.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateOnlineStatus(isChecked);
+            }
+        });
     }
+    private void updateOnlineStatus(boolean isOnline) {
+        String userId = mAuth.getCurrentUser().getUid();
+        DatabaseReference userRef = database.getReference("UserData").child(userId).child("online");
 
+        // Update online status in Firebase Realtime Database
+        userRef.setValue(isOnline)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        showToast("Online status updated successfully");
+                        if (isOnline) {
+                            online.setChecked(true);
+                            online.setText("Online");
+                            view2.setBackgroundResource(R.color.green);
+                        } else {
+                            online.setChecked(false);
+                            online.setText("Offline");
+                            view2.setBackgroundResource(R.color.red);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        showToast("Failed to update online status");
+                    }
+                });
+    }
     private void setToday() {
         disableButtons();
         allTime.setBackgroundResource(R.drawable.background_last_normal);

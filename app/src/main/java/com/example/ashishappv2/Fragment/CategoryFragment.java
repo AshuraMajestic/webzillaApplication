@@ -29,7 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements  CategoryAdapter.OnSwitchChangeListener2{
 
     private RecyclerView recyclerView;
     private AppCompatButton button;
@@ -61,7 +61,7 @@ public class CategoryFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerViewCategory);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         CategoryList = new ArrayList<>();
-        categoryAdapter = new CategoryAdapter(CategoryList, getContext());
+        categoryAdapter = new CategoryAdapter(CategoryList, getContext(),this);
         recyclerView.setAdapter(categoryAdapter);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,4 +125,29 @@ public class CategoryFragment extends Fragment {
     private void showToast(String shopNameIsNull) {
         Toast.makeText(getContext(), shopNameIsNull, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onSwitchChanged(String categoryName, boolean isChecked) {
+        DatabaseReference categoryRef = database.getReference().child("Shops").child(shopName).child("Category");
+
+        categoryRef.orderByChild("name").equalTo(categoryName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String categoryId = snapshot.getKey();
+                        categoryRef.child(categoryId).child("active").setValue(isChecked);
+                    }
+                } else {
+                    showToast("Category not found");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("AshuraDB", error.toString());
+            }
+        });
+    }
+
 }

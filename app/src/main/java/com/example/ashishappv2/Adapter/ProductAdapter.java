@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -21,10 +22,15 @@ import java.util.Map;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
     private List<ProductInventory> itemList;
     private Context context;
+    private OnSwitchChangeListener switchChangeListener;
 
-    public ProductAdapter(List<ProductInventory> itemList, Context context) {
+    public interface OnSwitchChangeListener {
+        void onSwitchChanged(String productName, boolean isChecked);
+    }
+    public ProductAdapter(List<ProductInventory> itemList, Context context,OnSwitchChangeListener switchChangeListener) {
         this.itemList = itemList;
         this.context = context;
+        this.switchChangeListener = switchChangeListener;
     }
 
     @NonNull
@@ -42,7 +48,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.piece.setText(item.getUnit() + " pieces");
         holder.price.setText("₹" + item.getPrice());
         holder.mySwitch.setChecked(item.isAvailable());
+        holder.mySwitch.setOnCheckedChangeListener(null);
+        // Set switch change listener
+        holder.mySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Update database when switch is toggled
+            switchChangeListener.onSwitchChanged(item.getName(), isChecked);
+        });
 
+// Set custom attributes for switch based on its state
+        if (item.isAvailable()) {
+            holder.mySwitch.setText("In Stock");
+            holder.mySwitch.setTextColor(ContextCompat.getColor(context, R.color.btngreen));
+        } else {
+            holder.mySwitch.setText("Out of Stock");
+            holder.mySwitch.setTextColor(ContextCompat.getColor(context, R.color.red));
+        }
         Map<String, String> images = item.getImages();
         if (images != null && !images.isEmpty()) {
             String firstImageUrl = images.values().iterator().next();

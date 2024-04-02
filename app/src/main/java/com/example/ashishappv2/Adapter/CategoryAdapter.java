@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -31,11 +32,15 @@ import java.util.Map;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder> {
     private List<CategoryInventory> itemList;
     private Context context;
-    private int collegeProductCount;
+    private OnSwitchChangeListener2 switchChangeListener;
+    public interface OnSwitchChangeListener2 {
+        void onSwitchChanged(String categoryName, boolean isChecked);
+    }
 
-    public CategoryAdapter(List<CategoryInventory> itemList, Context context) {
+    public CategoryAdapter(List<CategoryInventory> itemList, Context context,OnSwitchChangeListener2 switchChangeListener) {
         this.itemList = itemList;
         this.context = context;
+        this.switchChangeListener=switchChangeListener;
     }
 
     @NonNull
@@ -51,6 +56,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
         holder.categoryName.setText(item.getName());
             holder.listed.setText(item.getItemCount() + " products listed");
+        holder.mySwitch.setChecked(item.isActive());
+
+        // Set switch change listener
+        holder.mySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // Update database when switch is toggled
+            switchChangeListener.onSwitchChanged(item.getName(), isChecked);
+        });
+
+        // Set custom attributes for switch based on its state
+        if (item.isActive()) {
+            holder.mySwitch.setText("Active");
+            holder.mySwitch.setTextColor(ContextCompat.getColor(context, R.color.btngreen));
+        } else {
+            holder.mySwitch.setText("Inactive");
+            holder.mySwitch.setTextColor(ContextCompat.getColor(context, R.color.red));
+        }
+
 
         String imageUrl = item.getImage();
         if (imageUrl != null && !imageUrl.isEmpty()) {

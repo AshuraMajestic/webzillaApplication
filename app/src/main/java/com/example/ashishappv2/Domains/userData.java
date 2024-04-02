@@ -8,9 +8,10 @@ public class userData {
         private String address;
         private String number;
         private String link;
+        private Boolean online;
         public userData(){};
 
-        public userData(String username, String email, String password, String shopname, String address, String number,String link) {
+        public userData(String username, String email, String password, String shopname, String address, String number,String link,Boolean online) {
                 this.username = username;
                 this.email = email;
                 this.password = password;
@@ -18,6 +19,7 @@ public class userData {
                 this.address = address;
                 this.number = number;
                 this.link=link;
+                this.online=online;
         }
 
         public String getLink() {
@@ -74,5 +76,13 @@ public class userData {
 
         public void setNumber(String number) {
                 this.number = number;
+        }
+
+        public Boolean getOnline() {
+                return online;
+        }
+
+        public void setOnline(Boolean online) {
+                this.online = online;
         }
 }
