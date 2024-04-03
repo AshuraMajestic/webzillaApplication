@@ -7,64 +7,168 @@
     android:backgroundTint="@color/white"
     tools:context=".Fragment.OrderFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:background="@color/green"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Orders"
-            android:textColor="#FAF6F6"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintEnd_toEndOf="@id/view"
-            app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@id/view" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="32dp"
-            android:text="All Orders"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/green"
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/orderView"
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage Store"
+                android:textColor="#FAF6F6"
+                android:layout_marginTop="20dp"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:scrollbars="none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/all"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:background="@drawable/background_last_pressed2"
+                        android:layout_marginStart="12dp"
+                        android:textColor="@color/green"
+                        android:textStyle="bold"
+                        android:text="All"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/pending"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:background="@drawable/background_last_normal"
+                        android:layout_marginStart="12dp"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:textColor="@color/white"
+                        android:text="Pending"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/Accepted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:background="@drawable/background_last_normal"
+                        android:layout_marginStart="12dp"
+                        android:text="Accepted"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/shipped"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:background="@drawable/background_last_normal"
+                        android:layout_marginStart="12dp"
+                        android:text="Shipped"/><androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/Delivered"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:background="@drawable/background_last_normal"
+                        android:layout_marginStart="12dp"
+                        android:text="Delivered"/><androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/rejected"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:background="@drawable/background_last_normal"
+                        android:layout_marginStart="12dp"
+                        android:text="Rejected"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/cancelled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:background="@drawable/background_last_normal"
+                        android:layout_marginStart="12dp"
+                        android:text="Cancelled"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/Failed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        android:background="@drawable/background_last_normal"
+                        android:layout_marginStart="12dp"
+                        android:text="Failed"/>
+
+
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:text="All Orders"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topLayout" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="24dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/orderView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            </LinearLayout>
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
 </FrameLayout>

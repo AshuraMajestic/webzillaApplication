@@ -161,7 +161,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                         reject.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                OrderRef.child("accepted").setValue("pending")
+                                OrderRef.child("accepted").setValue("rejected")
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
@@ -209,21 +209,29 @@ public class OrderDetailActivity extends AppCompatActivity {
                         reject.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                OrderRef.removeValue()
+                                OrderRef.child("accepted").setValue("rejected")
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                // Order deleted successfully
-                                                Toast.makeText(OrderDetailActivity.this, "Order deleted", Toast.LENGTH_SHORT).show();
-                                                onBackPressed(); // Go back to the previous fragment or activity
+                                                dot.setImageResource(R.drawable.red_dot);
+                                                name.setText("rejected");
+                                                email.setText(orderList.getEmail()+"");
+                                                phone.setText(orderList.getNumber()+"");
+                                                address.setText(orderList.getAddress()+"");
+                                                city.setText(orderList.getCity()+"");
+                                                pinCode.setText(orderList.getZipCode()+"");
+                                                state.setText(orderList.getState()+"");
+                                                accept.setText("Ship Order");
+                                                accept.setBackgroundColor(getResources().getColor(R.color.btnorange));
+                                                reject.setText("Cancel Order");
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                // Handle any errors
-                                                Toast.makeText(OrderDetailActivity.this, "Failed to delete order", Toast.LENGTH_SHORT).show();
-                                                Log.e("OrderDetailActivity", "Failed to delete order", e);
+                                                // Handle any errors, show a toast message or log the error
+                                                Toast.makeText(OrderDetailActivity.this, "Failed to accept order", Toast.LENGTH_SHORT).show();
+                                                Log.e("OrderDetailActivity", "Failed to accept order", e);
                                             }
                                         });
                                 onBackPressed();
