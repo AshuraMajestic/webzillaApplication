@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 
 import com.example.ashishappv2.Domains.OrderDetailActivity;
+import com.example.ashishappv2.Fragment.OrderFragment;
 import com.example.ashishappv2.R;
 
 public class OrderPlacedActivity extends AppCompatActivity {
@@ -18,7 +19,7 @@ public class OrderPlacedActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent mainIntent = new Intent(OrderPlacedActivity.this, OrderDetailActivity.class);
+                Intent mainIntent = new Intent(OrderPlacedActivity.this, OrderFragment.class);
                 startActivity(mainIntent);
                 finish();
             }

@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.ashishappv2.Domains.Add_Product;
+import com.example.ashishappv2.Fragment.InventoryFragment;
 import com.example.ashishappv2.Fragment.ManageFragment;
 import com.example.ashishappv2.Fragment.HomeFragment;
 import com.example.ashishappv2.Fragment.OrderFragment;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 else if(id==R.id.manage){
-                    replace(new ManageFragment());
+                    replace(new InventoryFragment());
                     return true;
                 }
                 return false;

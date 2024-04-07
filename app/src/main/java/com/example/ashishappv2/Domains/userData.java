@@ -1,22 +1,20 @@
 package com.example.ashishappv2.Domains;
 
 public class userData {
-        private String username;
         private String email;
         private String password;
         private String shopname;
-        private String address;
         private String number;
         private String link;
         private Boolean online;
         public userData(){};
 
-        public userData(String username, String email, String password, String shopname, String address, String number,String link,Boolean online) {
-                this.username = username;
+        public userData( String email, String password, String shopname, String number,String link,Boolean online) {
+
                 this.email = email;
                 this.password = password;
                 this.shopname = shopname;
-                this.address = address;
+
                 this.number = number;
                 this.link=link;
                 this.online=online;
@@ -30,13 +28,7 @@ public class userData {
                 this.link = link;
         }
 
-        public String getUsername() {
-                return username;
-        }
 
-        public void setUsername(String username) {
-                this.username = username;
-        }
 
         public String getEmail() {
                 return email;
@@ -60,14 +52,6 @@ public class userData {
 
         public void setShopname(String shopname) {
                 this.shopname = shopname;
-        }
-
-        public String getAddress() {
-                return address;
-        }
-
-        public void setAddress(String address) {
-                this.address = address;
         }
 
         public String getNumber() {

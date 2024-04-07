@@ -287,46 +287,48 @@ public class HomeFragment extends Fragment {
         today.setTextColor(Color.BLACK);
 
         Calendar calendar = Calendar.getInstance();
-        Date currentDate = calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
-        String todayDateString = dateFormat.format(currentDate);
+        Date currentDate = calendar.getTime(); // Current date
 
-        // Query the database for visitor count for today
-        DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName).child(todayDateString);
+        // Convert the current date to the format used in the database
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String currentDateString = dateFormat.format(currentDate);
+
+        // Query the database for visitor counts for today
+        DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName).child(currentDateString);
         visitorRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long visitorCount = 0;
-                if (dataSnapshot.exists()) {
-                    visitorCount = dataSnapshot.getValue(Long.class);
+                long totalVisitorCount = 0;
+                Long count = dataSnapshot.getValue(Long.class);
+                if (count != null) {
+                    totalVisitorCount += count;
                 }
-                // Set visitor count
-                siteVisitCount.setText(String.valueOf(visitorCount));
+                // Set the total visitor count for today
+                siteVisitCount.setText(String.valueOf(totalVisitorCount));
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                makeLog("Error retrieving visitor count: " + databaseError.getMessage());
+                makeLog("Error retrieving visitor counts: " + databaseError.getMessage());
             }
         });
 
         // Query the database for orders for today
         DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
-        orderRef.orderByChild("date").equalTo(todayDateString).addListenerForSingleValueEvent(new ValueEventListener() {
+        makeLog(currentDateString);
+        orderRef.orderByChild("date").equalTo(currentDateString).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int totalOrderCount = 0;
                 double totalSalesAmount = 0;
-
-                // Iterate through the retrieved data and calculate total order count and total sales amount for today
                 for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
                     OrderList order = orderSnapshot.getValue(OrderList.class);
-                    if (order != null) {
                         totalOrderCount++;
+                    if (order != null && order.getAccepted().equals("shipped")) {
                         totalSalesAmount += order.getTotalPrice();
                     }
                 }
-                // Set total order count and total sales amount
+                // Set the total order count and total sales amount for today
                 totalOrder.setText(String.valueOf(totalOrderCount));
                 totalSales.setText("\u20B9" + " " + String.format("%.2f", totalSalesAmount));
             }
@@ -336,7 +338,6 @@ public class HomeFragment extends Fragment {
                 makeLog("Error retrieving orders: " + databaseError.getMessage());
             }
         });
-        
         enableButtons();
         salesShowLayout.setVisibility(View.GONE);
         SessionshowLayout.setVisibility(View.GONE);
@@ -358,16 +359,15 @@ public class HomeFragment extends Fragment {
         today.setBackgroundResource(R.drawable.background_last_normal);
         today.setTextColor(Color.GRAY);
 
-        // Get the current date
         Calendar calendar = Calendar.getInstance();
         Date endDate = calendar.getTime(); // Current date
 
-        // Subtract 7 days from the current date
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        // Subtract 6 days from the current date to get the start date (last 7 days)
+        calendar.add(Calendar.DAY_OF_MONTH, -6);
         Date startDate = calendar.getTime();
 
         // Convert the dates to the format used in the database
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String startDateString = dateFormat.format(startDate);
         String endDateString = dateFormat.format(endDate);
 
@@ -404,7 +404,9 @@ public class HomeFragment extends Fragment {
                     OrderList order = orderSnapshot.getValue(OrderList.class);
                     if (order != null) {
                         totalOrderCount++;
-                        totalSalesAmount += order.getTotalPrice();
+                        if(order.getAccepted().equals("shipped")) {
+                            totalSalesAmount += order.getTotalPrice();
+                        }
                     }
                 }
                 // Set the total order count and total sales amount
@@ -417,69 +419,223 @@ public class HomeFragment extends Fragment {
                 makeLog("Error retrieving orders: " + databaseError.getMessage());
             }
         });
-
-        setLast7DaysSalesGraph();
-        setSessionGraph(-7,7);
-        setLast7DaysTotalOrdersGraph();
+        setLastDaysSessionGraph(-6);
+        setLastDaysOrderGraph(-6);
+        setLastDaysSalesGraph(-6);
         enableButtons();
     }
 
-    private void setLast7DaysTotalOrdersGraph() {
-        // Get the current date
+
+    private void setLast30Days() {
+        disableButtons();
+        allTime.setBackgroundResource(R.drawable.background_last_normal);
+        allTime.setTextColor(Color.GRAY);
+        Last30.setBackgroundResource(R.drawable.background_last_pressed);
+        Last30.setTextColor(Color.BLACK);
+        Last7.setBackgroundResource(R.drawable.background_last_normal);
+        Last7.setTextColor(Color.GRAY);
+        today.setBackgroundResource(R.drawable.background_last_normal);
+        today.setTextColor(Color.GRAY);
+
         Calendar calendar = Calendar.getInstance();
         Date endDate = calendar.getTime(); // Current date
 
-        // Subtract 7 days from the current date
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
+        // Subtract 30 days from the current date
+        calendar.add(Calendar.DAY_OF_MONTH, -30);
         Date startDate = calendar.getTime();
 
         // Convert the dates to the format used in the database
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String startDateString = dateFormat.format(startDate);
         String endDateString = dateFormat.format(endDate);
 
-        // Initialize TreeMap to store total orders for each day
-        TreeMap<String, Integer> totalOrdersMap = new TreeMap<>();
-
-        // Loop through each day within the last 7 days
-        while (!startDate.after(endDate)) {
-            String dateString = dateFormat.format(startDate);
-            totalOrdersMap.put(dateString, 0); // Initialize count to zero for each day
-            calendar.add(Calendar.DAY_OF_MONTH, 1); // Move to the next day
-            startDate = calendar.getTime();
-        }
-
-        // Query orders within the last 7 days
-        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
-        Query orderQuery = orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString);
-        orderQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Query the database for visitor counts within the last 30 days
+        DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName);
+        visitorRef.orderByKey().startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Iterate through orders and aggregate total orders by date
+                long totalVisitorCount = 0;
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Long count = snapshot.getValue(Long.class);
+                    if (count != null) {
+                        totalVisitorCount += count;
+                    }
+                }
+                // Set the total visitor count
+                siteVisitCount.setText(String.valueOf(totalVisitorCount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving visitor counts: " + databaseError.getMessage());
+            }
+        });
+
+        // Query the database for orders within the last 30 days
+        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+        orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int totalOrderCount = 0;
+                double totalSalesAmount = 0;
                 for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
                     OrderList order = orderSnapshot.getValue(OrderList.class);
                     if (order != null) {
-                        String dateString = order.getDate(); // Assuming the order object has a date field
-
-                        // Update the totalOrdersMap with total orders for the respective date
-                        if (totalOrdersMap.containsKey(dateString)) {
-                            totalOrdersMap.put(dateString, totalOrdersMap.get(dateString) + 1);
+                        totalOrderCount++;
+                        if(order.getAccepted().equals("shipped")) {
+                            totalSalesAmount += order.getTotalPrice();
                         }
+                    }
+                }
+                // Set the total order count and total sales amount
+                totalOrder.setText(String.valueOf(totalOrderCount));
+                totalSales.setText("\u20B9" + " " + String.format("%.2f", totalSalesAmount));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving orders: " + databaseError.getMessage());
+            }
+        });
+        setLastDaysSessionGraph(-29);
+        setLastDaysOrderGraph(-29);
+        setLastDaysSalesGraph(-29);
+        enableButtons();
+    }
+    private void setLastDaysSalesGraph(Integer i) {
+        // Get the start and end dates for the last 30 days
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // Current date
+        calendar.add(Calendar.DAY_OF_MONTH, i); // Subtract 29 days to get the start date
+        Date startDate = calendar.getTime();
+        // Convert the dates to the format used in the database
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String startDateString = dateFormat.format(startDate);
+        String endDateString = dateFormat.format(endDate);
+
+        // Query the database for orders within the last 30 days
+        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+        orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Initialize TreeMap to store sales amounts for each day
+                TreeMap<String, Double> salesMap = new TreeMap<>();
+
+                // Iterate through each day and initialize amounts to 0
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                while (!calendar.getTime().after(endDate)) {
+                    String dateString = dateFormat.format(calendar.getTime());
+                    salesMap.put(dateString, 0.0);
+                    calendar.add(Calendar.DAY_OF_MONTH, 1); // Move to the next day
+                }
+
+                // Update sales amounts with retrieved data
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String dateString = snapshot.child("date").getValue(String.class);
+                    String acceptedStatus = snapshot.child("accepted").getValue(String.class);
+                    double totalPrice = snapshot.child("totalPrice").getValue(Double.class);
+                    if (dateString != null && acceptedStatus != null && acceptedStatus.equals("shipped") &&  !Double.isNaN(totalPrice)) {
+                        double amount = salesMap.getOrDefault(dateString, 0.0);
+                        salesMap.put(dateString, amount + totalPrice);
                     }
                 }
 
                 // Prepare data for chart
                 ArrayList<BarEntry> dataVals = new ArrayList<>();
-
-                // Initialize ArrayList to store x-axis labels (dates)
-                ArrayList<String> xLabels = new ArrayList<>(totalOrdersMap.keySet());
+                ArrayList<String> xLabels = new ArrayList<>(salesMap.keySet()); // to store x-axis labels
 
                 // Iterate through TreeMap to populate dataVals
-                int i = 0;
-                for (Map.Entry<String, Integer> entry : totalOrdersMap.entrySet()) {
-                    int totalOrders = entry.getValue();
+                int index = 0; // Counter to keep track of x-axis index
+                for (Map.Entry<String, Double> entry : salesMap.entrySet()) {
+                    double salesAmount = entry.getValue();
+
                     // Add entry to dataVals
-                    dataVals.add(new BarEntry(i++, totalOrders));
+                    dataVals.add(new BarEntry(index++, (float) salesAmount));
+                }
+
+                // Create BarDataSet and BarData
+                BarDataSet barDataSet = new BarDataSet(dataVals, "Total Sales");
+                int barColor = ContextCompat.getColor(getContext(), R.color.green);
+                barDataSet.setColor(barColor);
+                BarData data = new BarData(barDataSet);
+
+                // Set data to the chart
+                barChart2.setData(data);
+
+                // Customize x-axis labels
+                XAxis xAxis = barChart2.getXAxis();
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels)); // Set custom value formatter for x-axis
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
+                xAxis.setLabelRotationAngle(45);
+
+                // Customize y-axis labels (optional)
+                YAxis yAxis = barChart2.getAxisLeft();
+                yAxis.setValueFormatter(new DefaultAxisValueFormatter(0)); // Set y-axis to display integer values
+
+                // Hide right y-axis
+                YAxis rightYAxis = barChart2.getAxisRight();
+                rightYAxis.setEnabled(false);
+
+                barChart3.getDescription().setEnabled(false); // Hide description
+
+                barChart3.invalidate(); // Refresh chart
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                makeLog("Error retrieving sales data: " + databaseError.getMessage());
+            }
+        });
+    }
+
+    private void setLastDaysOrderGraph(Integer i) {
+        // Get the start and end dates for the last 30 days
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // Current date
+        calendar.add(Calendar.DAY_OF_MONTH, i); // Subtract 29 days to get the start date
+        Date startDate = calendar.getTime();
+        // Convert the dates to the format used in the database
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String startDateString = dateFormat.format(startDate);
+        String endDateString = dateFormat.format(endDate);
+        // Query the database for orders within the last 30 days
+        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
+        orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Initialize TreeMap to store order counts for each day
+                TreeMap<String, Integer> orderMap = new TreeMap<>();
+
+                // Iterate through each day and initialize counts to 0
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                while (!calendar.getTime().after(endDate)) {
+                    String dateString = dateFormat.format(calendar.getTime());
+                    orderMap.put(dateString, 0);
+                    calendar.add(Calendar.DAY_OF_MONTH, 1); // Move to the next day
+                }
+
+                // Update order counts with retrieved data
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String dateString = snapshot.child("date").getValue(String.class);
+                    if (dateString != null) {
+                        int count = orderMap.getOrDefault(dateString, 0);
+                        orderMap.put(dateString, count + 1);
+                    }
+                }
+
+                // Prepare data for chart
+                ArrayList<BarEntry> dataVals = new ArrayList<>();
+                ArrayList<String> xLabels = new ArrayList<>(orderMap.keySet()); // to store x-axis labels
+
+                // Iterate through TreeMap to populate dataVals
+                int index = 0; // Counter to keep track of x-axis index
+                for (Map.Entry<String, Integer> entry : orderMap.entrySet()) {
+                    int orderCount = entry.getValue();
+
+                    // Add entry to dataVals
+                    dataVals.add(new BarEntry(index++, orderCount));
                 }
 
                 // Create BarDataSet and BarData
@@ -512,218 +668,87 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                makeLog("Error retrieving orders: " + databaseError.getMessage());
+                makeLog("Error retrieving order counts: " + databaseError.getMessage());
             }
         });
     }
 
-
-    private void setSessionGraph(int a,int b) {
+    private void setLastDaysSessionGraph(Integer i) {
+        // Get the start and end dates for the last 30 days
         Calendar calendar = Calendar.getInstance();
         Date endDate = calendar.getTime(); // Current date
-
-        // Subtract 7 days from the current date
-        calendar.add(Calendar.DAY_OF_MONTH, a);
+        calendar.add(Calendar.DAY_OF_MONTH, i); // Subtract 29 days to get the start date
         Date startDate = calendar.getTime();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
-
-        // Initialize ArrayLists to store session counts and dates
-        ArrayList<Long> sessionCounts = new ArrayList<>();
-        ArrayList<String> dates = new ArrayList<>();
-
-        // Loop through each day of the previous 7 days
-        while (!startDate.after(endDate)) {
-            String dateString = dateFormat.format(startDate);
-            dates.add(dateString);
-
-            // Query the database for visitor counts for each day
-            DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName).child(dateString);
-            visitorRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Long count = dataSnapshot.getValue(Long.class);
-                    if (count != null) {
-                        sessionCounts.add(count);
-                    } else {
-                        sessionCounts.add(0L); // If no data available, set count to 0
-                    }
-
-                    // Check if all queries are finished
-                    if (sessionCounts.size() == b) {
-                        // Create BarEntry list for session counts
-                        ArrayList<BarEntry> sessionEntries = new ArrayList<>();
-                        for (int i = 0; i < sessionCounts.size(); i++) {
-                            sessionEntries.add(new BarEntry(i, sessionCounts.get(i)));
-                        }
-
-                        // Create BarDataSet for session data
-                        BarDataSet sessionDataSet = new BarDataSet(sessionEntries, "Session Counts");
-                        int barColor = ContextCompat.getColor(getContext(), R.color.green);
-                        sessionDataSet.setColor(barColor);
-
-                        // Create BarData and set it to the chart
-                        BarData sessionData = new BarData(sessionDataSet);
-
-                        // Customize x-axis labels
-                        XAxis xAxis = barChart.getXAxis();
-                        xAxis.setValueFormatter(new IndexAxisValueFormatter(dates)); // Set custom value formatter for x-axis
-                        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
-                        xAxis.setLabelRotationAngle(45);
-                        xAxis.setGranularity(1); // Set granularity to display labels for each entry
-                        xAxis.setGranularityEnabled(true); // Enable granularity
-
-                        // Set data to the chart
-                        barChart.setData(sessionData);
-                        barChart.invalidate(); // Refresh the chart
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    makeLog("Error retrieving visitor counts: " + databaseError.getMessage());
-                }
-            });
-
-            // Move to the next day
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            startDate = calendar.getTime();
-        }
-    }
-
-    private void setLast7DaysSalesGraph() {
-        // Get the current date
-        Calendar calendar = Calendar.getInstance();
-        Date endDate = calendar.getTime(); // Current date
-
-        // Subtract 7 days from the current date
-        calendar.add(Calendar.DAY_OF_MONTH, -7);
-        Date startDate = calendar.getTime();
-
         // Convert the dates to the format used in the database
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
-
-        // Initialize ArrayLists to store sales amounts and dates
-        ArrayList<Double> salesAmountsList = new ArrayList<>();
-        ArrayList<String> datesList = new ArrayList<>();
-
-        // Loop through each day of the previous 7 days
-        while (!startDate.after(endDate)) {
-            String dateString = dateFormat.format(startDate);
-            datesList.add(dateString);
-
-            // Query the database for orders for each day
-            DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
-            orderRef.orderByChild("date").equalTo(dateString).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    double totalSalesAmount = 0;
-
-                    // Iterate through the retrieved data and calculate total sales amount for the day
-                    for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
-                        OrderList order = orderSnapshot.getValue(OrderList.class);
-                        if (order != null) {
-                            totalSalesAmount += order.getTotalPrice();
-                        }
-                    }
-
-                    // Add the total sales amount for the day to the list
-                    salesAmountsList.add(totalSalesAmount);
-
-                    // Check if all queries are finished
-                    if (salesAmountsList.size() == 7) {
-                        // Create BarEntry list for sales amounts
-                        ArrayList<BarEntry> salesEntries = new ArrayList<>();
-                        for (int i = 0; i < salesAmountsList.size(); i++) {
-                            salesEntries.add(new BarEntry(i, salesAmountsList.get(i).floatValue()));
-                        }
-
-                        // Create BarDataSet for sales data
-                        BarDataSet salesDataSet = new BarDataSet(salesEntries, "Sales Amounts");
-                        int barColor = ContextCompat.getColor(getContext(), R.color.green);
-                        salesDataSet.setColor(barColor);
-
-                        // Create BarData and set it to the chart
-                        BarData salesData = new BarData(salesDataSet);
-
-                        // Customize x-axis labels
-                        XAxis xAxis = barChart2.getXAxis();
-                        xAxis.setValueFormatter(new IndexAxisValueFormatter(datesList)); // Set custom value formatter for x-axis
-                        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
-                        xAxis.setLabelRotationAngle(45);
-                        xAxis.setGranularity(1); // Set granularity to display labels for each entry
-                        xAxis.setGranularityEnabled(true); // Enable granularity
-
-                        // Set data to the chart
-                        barChart2.setData(salesData);
-                        barChart2.invalidate(); // Refresh the chart
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    makeLog("Error retrieving orders: " + databaseError.getMessage());
-                }
-            });
-
-            // Move to the next day
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            startDate = calendar.getTime();
-        }
-    }
-    // Utility method to get the index of a day in the 7-day range
-    private int getDayIndex(String startDateString, String dateString) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
-        try {
-            Date startDate = dateFormat.parse(startDateString);
-            Date date = dateFormat.parse(dateString);
-            long diffInMillies = Math.abs(date.getTime() - startDate.getTime());
-            long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-            if (diff >= 0 && diff < 7) {
-                return (int) diff;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return -1;
-    }
-
-    private void setLast30Days() {
-        disableButtons();
-        allTime.setBackgroundResource(R.drawable.background_last_normal);
-        allTime.setTextColor(Color.GRAY);
-        Last30.setBackgroundResource(R.drawable.background_last_pressed);
-        Last30.setTextColor(Color.BLACK);
-        Last7.setBackgroundResource(R.drawable.background_last_normal);
-        Last7.setTextColor(Color.GRAY);
-        today.setBackgroundResource(R.drawable.background_last_normal);
-        today.setTextColor(Color.GRAY);
-        Calendar calendar = Calendar.getInstance();
-        Date endDate = calendar.getTime(); // Current date
-
-// Subtract 30 days from the current date
-        calendar.add(Calendar.DAY_OF_MONTH, -28);
-        Date startDate = calendar.getTime();
-
-// Convert the dates to the format used in the database
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         String startDateString = dateFormat.format(startDate);
         String endDateString = dateFormat.format(endDate);
 
-// Query the database for visitor counts within the last 30 days
+        // Query the database for visitor counts within the last 30 days
         DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName);
         visitorRef.orderByKey().startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                long totalVisitorCount = 0;
+                // Initialize TreeMap to store visitor counts for each day
+                TreeMap<String, Long> visitorMap = new TreeMap<>();
+
+                // Iterate through each day and initialize counts to 0
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(startDate);
+                while (!calendar.getTime().after(endDate)) {
+                    String dateString = dateFormat.format(calendar.getTime());
+                    visitorMap.put(dateString, 0L);
+                    calendar.add(Calendar.DAY_OF_MONTH, 1); // Move to the next day
+                }
+
+                // Update visitor counts with retrieved data
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String dateString = snapshot.getKey();
                     Long count = snapshot.getValue(Long.class);
-                    if (count != null) {
-                        totalVisitorCount += count;
+                    if (dateString != null && count != null) {
+                        visitorMap.put(dateString, count);
                     }
                 }
-                // Set the total visitor count
-                siteVisitCount.setText(String.valueOf(totalVisitorCount));
+
+                // Prepare data for chart
+                ArrayList<BarEntry> dataVals = new ArrayList<>();
+                ArrayList<String> xLabels = new ArrayList<>(visitorMap.keySet()); // to store x-axis labels
+
+                // Iterate through TreeMap to populate dataVals
+                int index = 0; // Counter to keep track of x-axis index
+                for (Map.Entry<String, Long> entry : visitorMap.entrySet()) {
+                    long visitorCount = entry.getValue();
+
+                    // Add entry to dataVals
+                    dataVals.add(new BarEntry(index++, visitorCount));
+                }
+
+                // Create BarDataSet and BarData
+                BarDataSet barDataSet = new BarDataSet(dataVals, "Site Sessions");
+                int barColor = ContextCompat.getColor(getContext(), R.color.green);
+                barDataSet.setColor(barColor);
+                BarData data = new BarData(barDataSet);
+
+                // Set data to the chart
+                barChart.setData(data);
+
+                // Customize x-axis labels
+                XAxis xAxis = barChart.getXAxis();
+                xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels)); // Set custom value formatter for x-axis
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); // Set x-axis position
+                xAxis.setLabelRotationAngle(45);
+
+                // Customize y-axis labels (optional)
+                YAxis yAxis = barChart.getAxisLeft();
+                yAxis.setValueFormatter(new DefaultAxisValueFormatter(0)); // Set y-axis to display integer values
+
+                // Hide right y-axis
+                YAxis rightYAxis = barChart.getAxisRight();
+                rightYAxis.setEnabled(false);
+
+                barChart.getDescription().setEnabled(false); // Hide description
+
+                barChart.invalidate(); // Refresh chart
             }
 
             @Override
@@ -732,35 +757,22 @@ public class HomeFragment extends Fragment {
             }
         });
 
-// Query the database for orders within the last 30 days
-        DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
-        orderRef.orderByChild("date").startAt(startDateString).endAt(endDateString).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int totalOrderCount = 0;
-                double totalSalesAmount = 0;
-                for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
-                    OrderList order = orderSnapshot.getValue(OrderList.class);
-                    if (order != null) {
-                        totalOrderCount++;
-                        totalSalesAmount += order.getTotalPrice();
-                    }
-                }
-                // Set the total order count and total sales amount
-                totalOrder.setText(String.valueOf(totalOrderCount));
-                totalSales.setText("\u20B9" + " " + String.format("%.2f", totalSalesAmount));
-            }
+    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                makeLog("Error retrieving orders: " + databaseError.getMessage());
-            }
-        });
+    class MonthYearComparator implements Comparator<String> {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yyyy", Locale.US);
 
-        setSessionGraph(-28,28);
-//        set30DaysSalesGraph(startDateString);
-//        set30DaysTotalOrdersGraph(startDateString);
-        enableButtons();
+        @Override
+        public int compare(String s1, String s2) {
+            try {
+                Date date1 = sdf.parse(s1);
+                Date date2 = sdf.parse(s2);
+                return date1.compareTo(date2);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
     }
 
 
@@ -802,13 +814,15 @@ public class HomeFragment extends Fragment {
         orderRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int totalOrderCount = (int) dataSnapshot.getChildrenCount();
                 double totalSalesAmount = 0;
+                long totalOrderCount=dataSnapshot.getChildrenCount();
                 // Sum up all-time total sales
                 for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
                     OrderList order = orderSnapshot.getValue(OrderList.class);
                     if (order != null) {
-                        totalSalesAmount += order.getTotalPrice();
+                        if (order.getAccepted().equals("shipped")) {
+                            totalSalesAmount += order.getTotalPrice();
+                        }
                     }
                 }
                 // Set total sales and total order count
@@ -838,12 +852,16 @@ public class HomeFragment extends Fragment {
                 // Iterate through each order and aggregate sales amount by month
                 for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
                     OrderList order = orderSnapshot.getValue(OrderList.class);
+                    double totalPrice=0;
                     if (order != null) {
                         String dateString = order.getDate(); // Assuming the order object has a date field
-                        double totalPrice = order.getTotalPrice();
+                        if(order.getAccepted().equals("shipped")) {
+                            totalPrice = order.getTotalPrice();
+                        }
 
-                        // Extract month and year from the date string
-                        String monthYearString = getMonthYearFromDate(dateString);
+                        // Extract year and month from the date string (assuming yyyy-mm-dd format)
+                        String[] dateParts = dateString.split("-");
+                        String monthYearString = dateParts[0] + "-" + dateParts[1];
 
                         // Add sales amount to the map, aggregating if month-year already exists
                         salesMap.put(monthYearString, salesMap.getOrDefault(monthYearString, 0.0) + totalPrice);
@@ -901,21 +919,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    // Helper function to extract month and year from date string
-    private String getMonthYearFromDate(String dateString) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
-            Date date = sdf.parse(dateString);
-            if (date != null) {
-                SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMM-yyyy", Locale.US);
-                return monthYearFormat.format(date);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
     private void setSiteSessionGraph() {
         // Query the database for all visitor counts
         DatabaseReference visitorRef = database.getReference().child("VisitorCounts").child(ShopName);
@@ -930,7 +933,7 @@ public class HomeFragment extends Fragment {
                     Long count = snapshot.getValue(Long.class);
                     if (dateString != null && count != null) {
                         try {
-                            SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd yyyy", Locale.US);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
                             Date dateObj = sdf.parse(dateString);
                             if (dateObj != null) {
                                 String monthYear = getMonthYearFromDate(dateObj);
@@ -991,28 +994,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    // Helper function to extract month and year from date string
-    private String getMonthYearFromDate(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yyyy", Locale.US);
-        return sdf.format(date);
-    }
-
-    // Custom Comparator to sort TreeMap by month and year
-    class MonthYearComparator implements Comparator<String> {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yyyy", Locale.US);
-
-        @Override
-        public int compare(String s1, String s2) {
-            try {
-                Date date1 = sdf.parse(s1);
-                Date date2 = sdf.parse(s2);
-                return date1.compareTo(date2);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return 0;
-        }
-    }
 
     private void setTotalOrdersGraph() {
         DatabaseReference orderRef = database.getReference().child("Shops").child(ShopName).child("Orders");
@@ -1027,11 +1008,17 @@ public class HomeFragment extends Fragment {
                     if (order != null) {
                         String dateString = order.getDate(); // Assuming the order object has a date field
 
-                        // Extract month and year from the date string
-                        String monthYearString = getMonthYearFromDate(dateString);
-
-                        // Add total orders to the map, aggregating if month-year already exists
-                        totalOrdersMap.put(monthYearString, totalOrdersMap.getOrDefault(monthYearString, 0) + 1);
+                        try {
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                            Date dateObj = sdf.parse(dateString);
+                            if (dateObj != null) {
+                                String monthYearString = getMonthYearFromDate(dateObj);
+                                // Add total orders to the map, aggregating if month-year already exists
+                                totalOrdersMap.put(monthYearString, totalOrdersMap.getOrDefault(monthYearString, 0) + 1);
+                            }
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
@@ -1084,10 +1071,20 @@ public class HomeFragment extends Fragment {
     }
 
 
+
     private void gotoUrl(String s) {
         Uri uri = Uri.parse(s);
         startActivity(new Intent(Intent.ACTION_VIEW, uri));
     }
+
+
+    // Helper function to extract month and year from date string
+    private String getMonthYearFromDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yyyy", Locale.US);
+        return sdf.format(date);
+    }
+
+    // Custom Comparator to sort TreeMap by month and year
 
 
     private void enableButtons() {

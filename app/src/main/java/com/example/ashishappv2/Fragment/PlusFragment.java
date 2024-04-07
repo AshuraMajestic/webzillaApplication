@@ -28,7 +28,7 @@ import java.util.Objects;
 public class PlusFragment extends Fragment {
     private FirebaseAuth auth;
     private DatabaseReference database;
-    TextInputLayout username, shopname, address, mail, phonenumber,pass;
+    TextInputLayout  shopname, mail, phonenumber,pass;
     Button register;
     TextView loggo;
 
@@ -60,9 +60,7 @@ public class PlusFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         register = view.findViewById(R.id.button2);
-        username = view.findViewById(R.id.userRegister);
         shopname = view.findViewById(R.id.shopNameRegister);
-        address = view.findViewById(R.id.addressRegister);
         mail = view.findViewById(R.id.mailRegister);
         pass=view.findViewById(R.id.passRegister);
         phonenumber = view.findViewById(R.id.numberRegister);
@@ -73,19 +71,17 @@ public class PlusFragment extends Fragment {
             transaction.commit();
         });
         register.setOnClickListener(v->{
-            String userName = Objects.requireNonNull(username.getEditText()).getText().toString().trim();
             String shopName = Objects.requireNonNull(shopname.getEditText()).getText().toString();
-            String addressText = Objects.requireNonNull(address.getEditText()).getText().toString();
             String email = Objects.requireNonNull(mail.getEditText()).getText().toString().trim();
             String phoneNumber = Objects.requireNonNull(phonenumber.getEditText()).getText().toString().trim();
             String password = Objects.requireNonNull(pass.getEditText()).getText().toString();
             String link = shopName.toLowerCase().replaceAll("\\s", "");
-            if (userName.isEmpty() || shopName.isEmpty() || addressText.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty()) {
+            if (shopName.isEmpty() ||  email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty()) {
                 makeToast("Please fill in all fields");
                 return;
             }
             else{
-                userData user= new userData(userName,email,password,shopName,addressText,phoneNumber,link,false);
+                userData user= new userData(email,password,shopName,phoneNumber,link,false);
                 createAccount(user);
             }
 

@@ -38,35 +38,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/userRegister"
-                    style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="70dp"
-                    android:hint="@string/User"
-                    android:textColorHint="@color/box_stroke_color"
-                    app:boxCornerRadiusBottomEnd="15dp"
-                    app:boxCornerRadiusBottomStart="15dp"
-                    app:boxCornerRadiusTopEnd="15dp"
-                    app:boxCornerRadiusTopStart="15dp"
-                    app:boxStrokeColor="@color/box_stroke_color"
-                    app:helperTextTextColor="@color/red"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView5"
-                    app:startIconDrawable="@drawable/person"
-                    app:startIconTint="@color/black">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/user"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="text"
-                        android:textColor="@color/black"
-                        android:textStyle="bold" />
-
-                </com.google.android.material.textfield.TextInputLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -84,46 +55,14 @@
                     app:boxStrokeColor="@color/box_stroke_color"
                     app:helperTextTextColor="@color/red"
                     app:startIconDrawable="@drawable/shop"
-                    app:layout_constraintEnd_toEndOf="@+id/userRegister"
-                    app:layout_constraintStart_toStartOf="@+id/userRegister"
-                    app:layout_constraintTop_toBottomOf="@+id/userRegister"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView5"
                     app:layout_goneMarginTop="36dp"
                     app:startIconTint="@color/black">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/shopName"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:inputType="text"
-                        android:textColor="@color/black"
-                        android:textStyle="bold" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/addressRegister"
-                    style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    app:endIconTint="@color/black"
-                    android:hint="@string/Address"
-                    app:boxCornerRadiusBottomEnd="15dp"
-                    app:boxCornerRadiusBottomStart="15dp"
-                    app:boxCornerRadiusTopEnd="15dp"
-                    android:textColorHint="@color/box_stroke_color"
-                    app:boxCornerRadiusTopStart="15dp"
-                    app:boxStrokeColor="@color/box_stroke_color"
-                    app:helperTextTextColor="@color/red"
-                    app:startIconDrawable="@drawable/address"
-                    app:layout_constraintEnd_toEndOf="@+id/shopNameRegister"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    android:textColorHighlight="@color/box_stroke_color"
-                    app:layout_constraintStart_toStartOf="@+id/shopNameRegister"
-                    app:layout_constraintTop_toBottomOf="@+id/shopNameRegister"
-                    app:startIconTint="@color/black">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:inputType="text"
@@ -147,9 +86,11 @@
                     app:boxCornerRadiusTopEnd="15dp"
                     app:boxCornerRadiusTopStart="15dp"
                     app:boxStrokeColor="@color/box_stroke_color"
-                    app:layout_constraintEnd_toEndOf="@+id/passRegister"
-                    app:layout_constraintStart_toStartOf="@+id/passRegister"
-                    app:layout_constraintTop_toBottomOf="@+id/passRegister"
+                    app:layout_constraintEnd_toEndOf="@+id/shopNameRegister"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    android:textColorHighlight="@color/box_stroke_color"
+                    app:layout_constraintStart_toStartOf="@+id/shopNameRegister"
+                    app:layout_constraintTop_toBottomOf="@+id/shopNameRegister"
                     app:helperTextTextColor="@color/red"
                     app:startIconDrawable="@drawable/phone"
                     app:startIconTint="@color/black">
@@ -161,7 +102,6 @@
                         android:inputType="text"
                         android:textColor="@color/black"
                         android:textStyle="bold" />
-                    <!--            android:textColorHighlight="@color/purple"-->
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -177,9 +117,9 @@
                     app:boxCornerRadiusTopEnd="15dp"
                     app:boxCornerRadiusTopStart="15dp"
                     app:boxStrokeColor="@color/box_stroke_color"
-                    app:layout_constraintEnd_toEndOf="@+id/addressRegister"
-                    app:layout_constraintStart_toStartOf="@+id/addressRegister"
-                    app:layout_constraintTop_toBottomOf="@+id/addressRegister"
+                    app:layout_constraintEnd_toEndOf="@+id/numberRegister"
+                    app:layout_constraintStart_toStartOf="@+id/numberRegister"
+                    app:layout_constraintTop_toBottomOf="@+id/numberRegister"
                     app:helperTextTextColor="@color/red"
                     app:startIconDrawable="@drawable/mail"
                     app:startIconTint="@color/black">
@@ -239,9 +179,9 @@
                     android:textSize="21sp"
                     android:textStyle="bold"
                     app:cornerRadius="15dp"
-                    app:layout_constraintEnd_toEndOf="@+id/numberRegister"
-                    app:layout_constraintStart_toStartOf="@+id/numberRegister"
-                    app:layout_constraintTop_toBottomOf="@+id/numberRegister"
+                    app:layout_constraintEnd_toEndOf="@+id/passRegister"
+                    app:layout_constraintStart_toStartOf="@+id/passRegister"
+                    app:layout_constraintTop_toBottomOf="@+id/passRegister"
                     app:strokeColor="@color/box_stroke_color"
                     app:strokeWidth="2dp" />
 

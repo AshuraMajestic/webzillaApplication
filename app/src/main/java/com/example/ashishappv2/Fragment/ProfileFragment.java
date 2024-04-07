@@ -82,9 +82,8 @@ public static ProfileFragment newInstance() {
                         // Get the link dynamically from the user data
                         String link = user.getLink();
                         String shopname=user.getShopname();
-                        String userName= user.getUsername();
                         shopName.setText(shopname);
-                        username.setText("@"+userName);
+                        username.setText("@"+link);
                         // Now use the dynamically retrieved link to fetch the logo
                         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Shops").child(link);
                         StorageReference userLogoRef = storageReference.child("ShopLogo").child("logo.jpg");

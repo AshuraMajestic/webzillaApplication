@@ -161,21 +161,11 @@ public class OrderDetailActivity extends AppCompatActivity {
                         reject.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                OrderRef.child("accepted").setValue("rejected")
+                                OrderRef.child("accepted").setValue("cancelled")
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                dot.setImageResource(R.drawable.orange_dot);
-                                                name.setText("**********");
-                                                email.setText("**********");
-                                                phone.setText("**********");
-                                                address.setText("**********");
-                                                city.setText("******");
-                                                pinCode.setText("******");
-                                                state.setText("******");
-                                                reject.setText("Reject Order");
-                                                accept.setText("Accept Order");
-                                                accept.setBackgroundColor(getResources().getColor(R.color.btngreen));
+                                                finish();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -195,7 +185,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                             showPopUp();
                             }
                         });
-                    }else{
+                    }else if(orderList.getAccepted().equals("pending")){
                         dot.setImageResource(R.drawable.orange_dot);
                         name.setText("**********");
                         email.setText("**********");
@@ -213,17 +203,7 @@ public class OrderDetailActivity extends AppCompatActivity {
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                dot.setImageResource(R.drawable.red_dot);
-                                                name.setText("rejected");
-                                                email.setText(orderList.getEmail()+"");
-                                                phone.setText(orderList.getNumber()+"");
-                                                address.setText(orderList.getAddress()+"");
-                                                city.setText(orderList.getCity()+"");
-                                                pinCode.setText(orderList.getZipCode()+"");
-                                                state.setText(orderList.getState()+"");
-                                                accept.setText("Ship Order");
-                                                accept.setBackgroundColor(getResources().getColor(R.color.btnorange));
-                                                reject.setText("Cancel Order");
+                                                finish();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -239,8 +219,6 @@ public class OrderDetailActivity extends AppCompatActivity {
                         });
 
                         accept.setText("Accept Order");
-
-
                         accept.setBackgroundColor(getResources().getColor(R.color.btngreen));
                         accept.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -313,9 +291,24 @@ public class OrderDetailActivity extends AppCompatActivity {
                   showapiDialog();
                     // Add your code here to handle the action for radioButton1
                 } else if (selectedRadioButtonId == radioButton2.getId()) {
-                    Intent intent = new Intent(getApplicationContext(), OrderPlacedActivity.class);
-                    startActivity(intent);
-                    finish();
+                    OrderRef.child("accepted").setValue("shipped")
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Intent intent = new Intent(getApplicationContext(), OrderPlacedActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle any errors, show a toast message or log the error
+                                    Toast.makeText(OrderDetailActivity.this, "Failed to ship order", Toast.LENGTH_SHORT).show();
+                                    Log.e("OrderDetailActivity", "Failed to ship order", e);
+                                }
+                            });
+
                 } else {
                     Toast.makeText(getApplicationContext(), "Please select a shipping option", Toast.LENGTH_SHORT).show();
                 }

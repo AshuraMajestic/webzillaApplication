@@ -53,9 +53,19 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
         holder.Accepted.setText(item.getAccepted());
         if (Objects.equals(item.getAccepted(), "accepted")) {
             holder.dot.setImageResource(R.drawable.green_dot);
-        } else {
+        }else if (Objects.equals(item.getAccepted(), "shipped")) {
+            holder.dot.setImageResource(R.drawable.green_dot);
+            holder.button.setEnabled(false);
+        } else if(Objects.equals(item.getAccepted(), "pending")){
             holder.dot.setImageResource(R.drawable.orange_dot);
+        }else if(Objects.equals(item.getAccepted(), "rejected")){
+            holder.dot.setImageResource(R.drawable.red_dot);
+            holder.button.setEnabled(false);
+        }else if(Objects.equals(item.getAccepted(), "cancelled")){
+            holder.dot.setImageResource(R.drawable.red_dot);
+            holder.button.setEnabled(false);
         }
+
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
