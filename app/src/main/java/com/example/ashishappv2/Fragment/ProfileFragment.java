@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.ashishappv2.Activity.EditProfile;
 import com.example.ashishappv2.Activity.MainActivity;
 import com.example.ashishappv2.Activity.PaymentGateway;
 import com.example.ashishappv2.Domains.userData;
@@ -36,7 +37,7 @@ public class ProfileFragment extends Fragment {
 
     ImageView logo;
     TextView shopName,username;
-    LinearLayout Payment,security,notification,support,logout;
+    LinearLayout security,notification,support,logout,editDetail;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -64,12 +65,12 @@ public static ProfileFragment newInstance() {
         notification=view.findViewById(R.id.notificationLayout);
         support=view.findViewById(R.id.supportLayout);
         logout=view.findViewById(R.id.logoutLayout);
+        editDetail=view.findViewById(R.id.editDetail);
 //        Payment = view.findViewById(R.id.payment);
 
 
         //Firebase Elements
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("UserData").child(userId);
 
@@ -118,31 +119,20 @@ public static ProfileFragment newInstance() {
                 requireActivity().finish(); // Close the current activity
             }
         });
+        editDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getContext(), EditProfile.class);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        Payment.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Payment.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        try {
-//                            Intent intent = new Intent(getContext(), PaymentGateway.class);
-//                            if (getContext() != null) {
-//                                startActivity(intent);
-//                            }
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            Log.e("PaymentClick", "Error in onClick: " + e.getMessage());
-//                        }
-//                    }
-//                });
-//            }
-//        });
+
     }
 
     private void retrieveShopName() {

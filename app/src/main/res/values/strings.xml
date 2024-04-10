@@ -88,5 +88,13 @@
     <string name="sellingPrice">Selling Price <font color="red">*</font></string>
     <string name="signup">Dont\'t have an account? <font color="#802EEC">Sign up</font></string>
 
+<!--    Edit store detail-->
+    <string name="storeLink">Store Link </string>
+    <string name="storeName">Business Name <font color="red">*</font></string>
+    <string name="storeCategory">Business Category <font color="red">*</font></string>
+    <string name="storeMobile">Mobile Number <font color="red">*</font></string>
+    <string name="storeMail">Email Address <font color="red">*</font></string>
+    <string name="storeMobileText"><font color="grey">+91 - </font></string>
+
 
 </resources>

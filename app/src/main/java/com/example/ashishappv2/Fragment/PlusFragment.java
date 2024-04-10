@@ -70,24 +70,47 @@ public class PlusFragment extends Fragment {
             transaction.replace(R.id.frame_layout,new LoginFragment());
             transaction.commit();
         });
-        register.setOnClickListener(v->{
+        register.setOnClickListener(v -> {
             String shopName = Objects.requireNonNull(shopname.getEditText()).getText().toString();
             String email = Objects.requireNonNull(mail.getEditText()).getText().toString().trim();
             String phoneNumber = Objects.requireNonNull(phonenumber.getEditText()).getText().toString().trim();
             String password = Objects.requireNonNull(pass.getEditText()).getText().toString();
             String link = shopName.toLowerCase().replaceAll("\\s", "");
-            if (shopName.isEmpty() ||  email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty()) {
+
+            if (shopName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty()) {
                 makeToast("Please fill in all fields");
                 return;
             }
-            else{
-                userData user= new userData(email,password,shopName,phoneNumber,link,false);
-                createAccount(user);
+            if (!isValidEmail(email)) {
+                makeToast("Please enter a valid email address");
+                return;
+            }
+            if (!isValidPhoneNumber(phoneNumber)) {
+                makeToast("Please enter a valid phone number");
+                return;
+            }
+            if (!isValidPassword(password)) {
+                makeToast("Please enter a valid password (minimum 6 characters)");
+                return;
             }
 
+            userData user = new userData(email, password, shopName, phoneNumber, link, false);
+            createAccount(user);
         });
     }
+    private boolean isValidEmail(String email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
 
+    // Validate phone number format
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        return android.util.Patterns.PHONE.matcher(phoneNumber).matches();
+    }
+
+    // Validate password length
+    private boolean isValidPassword(String password) {
+        return password.length() >= 6;
+    }
     private void createAccount(userData user) {
         auth.createUserWithEmailAndPassword(user.getEmail(),user.getPassword()).addOnCompleteListener(task->{
             if(task.isSuccessful()){

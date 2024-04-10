@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".Activity.EditProfile">
+
+
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/green"
+            android:orientation="horizontal">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Edit Business Detail"
+                    android:textAlignment="center"
+                    android:textColor="#FAF6F6"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/backButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:background="@color/transparent"
+                    android:src="@drawable/back"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/white_background3"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/shopLogo"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/camera2"
+                             />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/updateImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Update Store Image"
+                        android:textColor="@color/green"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_marginTop="20dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textView48"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:text="Store Information"
+                            android:textColor="@color/black" />
+
+                        <LinearLayout
+                            android:id="@+id/storeLinkLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/labelName"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@color/transparent"
+                                android:textColorHint="@color/hintColor"
+                                app:boxBackgroundColor="@android:color/transparent"
+                                app:hintTextColor="@color/green">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/storeLink"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white"
+                                    android:hint="@string/storeLink"
+                                    android:text="webzilla/"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/storeNameLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/labelName2"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@color/transparent"
+                                android:textColorHint="@color/hintColor"
+                                app:boxBackgroundColor="@android:color/transparent"
+                                app:hintTextColor="@color/green">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/storeName"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white"
+                                    android:hint="@string/storeName"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/storeCategoryLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/labelName3"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@color/transparent"
+                                android:textColorHint="@color/hintColor"
+                                app:boxBackgroundColor="@android:color/transparent"
+                                app:hintTextColor="@color/green">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/storeCategory"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white"
+                                    android:hint="@string/storeCategory"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/storeNumberLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/labelName4"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@color/transparent"
+                                android:textColorHint="@color/hintColor"
+                                app:boxBackgroundColor="@android:color/transparent"
+                                app:hintTextColor="@color/green">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/storeMobileNumber"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white"
+                                    android:hint="@string/storeMobile"
+                                    android:text="@string/storeMobileText"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/storeMailLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/labelName5"
+                                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@color/transparent"
+                                android:textColorHint="@color/hintColor"
+                                app:boxBackgroundColor="@android:color/transparent"
+                                app:hintTextColor="@color/green">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/storeMail"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white"
+                                    android:hint="@string/storeMail"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/deleteAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Delete Account"
+                        android:textColor="@color/red"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:id="@+id/view6"
+            android:layout_width="match_parent"
+            android:background="@color/greyish"
+            android:layout_height="2dp" />
+
+        <TextView
+            android:id="@+id/saveData"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:paddingVertical="4dp"
+            android:layout_width="match_parent"
+            android:textAlignment="center"
+            android:background="@drawable/ship_btn_bg"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:text="Save" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
