@@ -177,7 +177,7 @@ public class HomeFragment extends Fragment {
                     String shopName=dataSnapshot.child("shopname").getValue(String.class);
                     boolean isOnline = dataSnapshot.child("online").getValue(Boolean.class);
                     shopname.setText(shopName);
-                    shopLink.setText("https://ashishweb-jv5n.onrender.com/" + ShopName);
+                    shopLink.setText("https://webzilla.onrender.com/" + ShopName);
                     if (isOnline) {
                         online.setChecked(true);
                         online.setText("Online");
