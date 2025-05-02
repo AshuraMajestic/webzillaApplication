@@ -7,40 +7,40 @@ This project showcases the Webzilla Application. The `ss` directory contains ste
 ## Screenshots
 
 ### Step 1
-![Step 1](ss/Picture1.png)
+<img src="ss/Picture1.png" width="300">
 
 ### Step 2
-![Step 2](ss/Picture2.png)
+<img src="ss/Picture2.png" width="300">
 
 ### Step 3
-![Step 3](ss/Picture3.png)
+<img src="ss/Picture3.png" width="300">
 
 ### Step 4
-![Step 4](ss/Picture4.png)
+<img src="ss/Picture4.png" width="300">
 
 ### Step 5
-![Step 5](ss/Picture5.png)
+<img src="ss/Picture5.png" width="300">
 
 ### Step 6
-![Step 6](ss/Picture6.png)
+<img src="ss/Picture6.png" width="300">
 
 ### Step 7
-![Step 7](ss/Picture7.png)
+<img src="ss/Picture7.png" width="300">
 
 ### Step 8
-![Step 8](ss/Picture8.png)
+<img src="ss/Picture8.png" width="300">
 
 ### Step 9
-![Step 9](ss/Picture9.png)
+<img src="ss/Picture9.png" width="300">
 
 ### Step 10
-![Step 10](ss/Picture10.png)
+<img src="ss/Picture10.png" width="300">
 
 ### Step 11
-![Step 11](ss/Picture11.png)
+<img src="ss/Picture11.png" width="300">
 
 ### Step 12
-![Step 12](ss/Picture12.png)
+<img src="ss/Picture12.png" width="300">
 
 ### Step 13
-![Step 13](ss/Picture13.png)
+<img src="ss/Picture13.png" width="300">
